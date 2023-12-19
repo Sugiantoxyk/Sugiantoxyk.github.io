@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "JetBrains Mono", "Eudoxus Sans", sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* Fill body with color */
+body {
+  background-color: #0D0019;
+}
+
+/* Navbar shading */
+.navbar-gradient {
+  background-image: linear-gradient(
+    180deg,
+    hsl(271, 100%, 5%, 1),
+    hsl(271, 100%, 5%, 0)
+  );
+  filter: blur()
+}
+
+/* Menu open shade */
+.menu-shade {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: #0D0019;
+  border-radius: 5px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #6d28d9;
+  border-radius: 5px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #7c3aed;
+}
+
+/* Menu Items */
+.menu-item:hover {
+  filter: invert(51%) sepia(97%) saturate(6975%) hue-rotate(262deg) brightness(100%) contrast(102%);
+}
+
+/* Connection Logo */
+.connection-logo:hover {
+  filter: invert(51%) sepia(97%) saturate(6975%) hue-rotate(262deg) brightness(100%) contrast(102%);
+}
+
+.gradient-02 {
+  position: absolute;
+  width: 200px;
+  height: 438px;
+  top: 0px;
+  right: 0px;
+
+  background: #897afb;
+  filter: blur(190px);
+}
+
+.gradient-03 {
+  position: absolute;
+  width: 404px;
+  height: 800px;
+  left: 20%;
+  top: 5%;
+
+  background: rgba(156, 92, 220, 0.35);
+  filter: blur(175px);
+  transform: rotate(-114.2deg);
+}
+
+.gradient-04 {
+  position: absolute;
+  width: 304px;
+  height: 100vh;
+  left: 30%;
+  top: 10%;
+
+  background: rgba(45, 72, 152, 0.75);
+  filter: blur(200px);
+  transform: rotate(-53.13deg);
+}
+
+.gradient-05 {
+  position: absolute;
+  width: 305px;
+  height: 700px;
+  right: 20%;
+  top: 5%;
+
+  background: rgba(77, 46, 147, 0.35);
+  filter: blur(175px);
+  transform: rotate(-231.2deg);
+}
