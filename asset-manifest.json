@@ -1,13 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.f822a71a.css",
-    "main.js": "/static/js/main.988bec7d.js",
-    "index.html": "/index.html",
-    "main.f822a71a.css.map": "/static/css/main.f822a71a.css.map",
-    "main.988bec7d.js.map": "/static/js/main.988bec7d.js.map"
+    "main.css": "/static/css/main.3606b0ad.css",
+    "main.js": "/static/js/main.bb7acf48.js",
+    "static/media/quarto.glb": "/static/media/quarto.89b256bca3820e1add72.glb",
+    "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.f822a71a.css",
-    "static/js/main.988bec7d.js"
+    "static/css/main.3606b0ad.css",
+    "static/js/main.bb7acf48.js"
   ]
 }
