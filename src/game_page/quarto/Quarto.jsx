@@ -51,28 +51,28 @@ const Quarto = (props) => {
     const quartoRef = useRef();
     const { nodes, materials } = useGLTF(quartoScene);
     const [boardScale, boardPosition, boardRotation] = adjustBoardForScreenSize();
-    const [step, setStep] = useState(1);
-    const [player, setPlayer] = useState(1);
-    const gridPositions = [
-        {position: [-0.209, 0.021, -0.208]},
-        {position: [-0.07, 0.021, -0.208]},
-        {position: [0.069, 0.021, -0.208]}, 
-        {position: [0.208, 0.021, -0.208]}, 
-        {position: [-0.209, 0.021, -0.069]}, 
-        {position: [-0.07, 0.021, -0.069]}, 
-        {position: [0.069, 0.021, -0.069]}, 
-        {position: [0.208, 0.021, -0.069]}, 
-        {position: [-0.209, 0.021, 0.071]}, 
-        {position: [-0.07, 0.021, 0.071]}, 
-        {position: [0.069, 0.021, 0.071]}, 
-        {position: [0.208, 0.021, 0.071]}, 
-        {position: [-0.209, 0.021, 0.211]}, 
-        {position: [-0.07, 0.021, 0.211]}, 
-        {position: [0.069, 0.021, 0.211]}, 
-        {position: [0.208, 0.021, 0.211]}, 
+    const initialGridPositions = [
+        {position: [-0.209, 0.021, -0.208], piece: "", win: 0},
+        {position: [-0.07, 0.021, -0.208], piece: "", win: 0},
+        {position: [0.069, 0.021, -0.208], piece: "", win: 0},
+        {position: [0.208, 0.021, -0.208], piece: "", win: 0},
+        {position: [-0.209, 0.021, -0.069], piece: "", win: 0},
+        {position: [-0.07, 0.021, -0.069], piece: "", win: 0},
+        {position: [0.069, 0.021, -0.069], piece: "", win: 0},
+        {position: [0.208, 0.021, -0.069], piece: "", win: 0},
+        {position: [-0.209, 0.021, 0.071], piece: "", win: 0},
+        {position: [-0.07, 0.021, 0.071], piece: "", win: 0},
+        {position: [0.069, 0.021, 0.071], piece: "", win: 0},
+        {position: [0.208, 0.021, 0.071], piece: "", win: 0},
+        {position: [-0.209, 0.021, 0.211], piece: "", win: 0},
+        {position: [-0.07, 0.021, 0.211], piece: "", win: 0},
+        {position: [0.069, 0.021, 0.211], piece: "", win: 0},
+        {position: [0.208, 0.021, 0.211], piece: "", win: 0},
     ];
-    const piecesInfo = [
+    const initialPiecesInfo = [
         {   
+            char: "LSTS",
+            grid: -1,
             geometry: nodes.Object_12.geometry,
             material: materials.Wood_procedural_lighter,
             position: [-0.209, 0.045, -0.508],
@@ -80,6 +80,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
+            char: "DSTS",
+            grid: -1,
             geometry: nodes.Object_14.geometry,
             material: materials.Wood_procedural,
             position: [-0.069, 0.045, -0.508],
@@ -87,6 +89,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
+            char: "LSTH",
+            grid: -1,
             geometry: nodes.Object_16.geometry,
             material: materials.Wood_procedural_lighter,
             position: [0.069, 0.045, -0.508],
@@ -94,6 +98,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
+            char: "DSTH",
+            grid: -1,
             geometry: nodes.Object_18.geometry,
             material: materials.Wood_procedural,
             position: [0.208, 0.045, -0.508],
@@ -101,6 +107,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
+            char: "LSSS",
+            grid: -1,
             geometry: nodes.Object_20.geometry,
             material: materials.Wood_procedural_lighter,
             position: [0.507, 0.045, -0.208],
@@ -108,6 +116,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         },  
         {
+            char: "LSSH",
+            grid: -1,
             geometry: nodes.Object_22.geometry,
             material: materials.Wood_procedural_lighter,
             position: [-0.509, 0.045, -0.067],
@@ -115,6 +125,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         },  
         {
+            char: "DSSS",
+            grid: -1,
             geometry: nodes.Object_24.geometry,
             material: materials.Wood_procedural,
             position: [0.507, 0.045, -0.067],
@@ -122,6 +134,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
+            char: "DSSH",
+            grid: -1,
             geometry: nodes.Object_26.geometry,
             material: materials.Wood_procedural,
             position: [-0.509, 0.045, -0.208],
@@ -129,6 +143,8 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
+            char: "LRTS",
+            grid: -1,
             geometry: nodes.Object_28.geometry,
             material: materials.Wood_procedural_lighter,
             position: [-0.509, 0.046, 0.071],
@@ -136,6 +152,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         },  
         {
+            char: "DRTS",
+            grid: -1,
             geometry: nodes.Object_30.geometry,
             material: materials.Wood_procedural,
             position: [-0.509, 0.046, 0.211],
@@ -143,6 +161,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         },  
         {
+            char: "LRTH",
+            grid: -1,
             geometry: nodes.Object_32.geometry,
             material: materials.Wood_procedural_lighter,
             position: [0.508, 0.046, 0.211],
@@ -150,6 +170,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         }, 
         {
+            char: "DRTH",
+            grid: -1,
             geometry: nodes.Object_34.geometry,
             material: materials.Wood_procedural,
             position: [0.508, 0.046, 0.071],
@@ -157,6 +179,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         }, 
         {
+            char: "LRSS",
+            grid: -1,
             geometry: nodes.Object_36.geometry,
             material: materials.Wood_procedural_lighter,
             position: [-0.209, 0.046, 0.511],
@@ -164,6 +188,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         },  
         {
+            char: "DRSS",
+            grid: -1,
             geometry: nodes.Object_38.geometry,
             material: materials.Wood_procedural,
             position: [-0.07, 0.046, 0.511],
@@ -171,6 +197,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         },  
         {
+            char: "LRSH",
+            grid: -1,
             geometry: nodes.Object_40.geometry,
             material: materials.Wood_procedural_lighter,
             position: [0.068, 0.046, 0.511],
@@ -178,6 +206,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         }, 
         {
+            char: "DRSH",
+            grid: -1,
             geometry: nodes.Object_42.geometry,
             material: materials.Wood_procedural,
             position: [0.208, 0.046, 0.511],
@@ -185,11 +215,102 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         }, 
     ];
+    const [step, setStep] = useState(1);
+    const [playerTurn, setPlayerTurn] = useState(1);
+    const [indexSelected, setIndexSelected] = useState(-1);
+    const [gridPositions, setGridPositions] = useState(initialGridPositions);
+    const [piecesInfo, setPiecesInfo] = useState(initialPiecesInfo);
+
+    function checkSame(indexes) {
+        console.log(indexes);
+        for (const i of indexes) {
+            console.log(gridPositions[i].piece);
+        }
+        if (indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[0] === gridPositions[indexes[0]].piece[0])) ||
+            indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[1] === gridPositions[indexes[0]].piece[1])) ||
+            indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[2] === gridPositions[indexes[0]].piece[2])) ||
+            indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[3] === gridPositions[indexes[0]].piece[3]))
+        ) {
+            for (const i of indexes) { gridPositions[i].win = 1; }
+            return true;
+        } else return false;
+    }
+    function checkWin() {
+        // Check if a player win or draw
+        for (const i of [0,4,8,12]) {
+            var indexes = [];
+            for (let j=0; j<4; j++) {
+                indexes.push(i+j);
+            }
+            if (checkSame(indexes)) return 1;
+        }
+        for (let i=0; i<4; i++) {
+            var indexes = [];
+            for (const j of [0,4,8,12]) {
+                indexes.push(i+j);
+            }
+            if (checkSame(indexes)) return 1;
+        }
+        var indexes = [];
+        for (let i=0; i<16; i+=5) {
+            indexes.push(i);
+        }
+        if (checkSame(indexes)) return 1;
+        var indexes = [];
+        for (let i=3; i<13; i+=3) {
+            indexes.push(i);
+        }
+        if (checkSame(indexes)) return 1;
+
+        if (gridPositions.every(val => val.piece !== "")) return 2;
+        return 0;
+    }
+    function handlePieceClick(index) {
+        // Update states of the game
+        setIndexSelected(index);
+        setStep(2);
+        setPlayerTurn((prev) => (prev === 1? 2 : 1));
+    }
+    function handleGridClick(index) {
+        // Update piece new position on the board
+        var newPosition = gridPositions[index].position;
+        newPosition[1] = 0.045;
+        const newPiecesInfo = [...piecesInfo];
+        newPiecesInfo[indexSelected].position = newPosition;
+        newPiecesInfo[indexSelected].grid = index;
+        setPiecesInfo(newPiecesInfo);
+        // Update grid is occupied
+        const newGridPositions = [...gridPositions];
+        newGridPositions[index].piece = piecesInfo[indexSelected].char;
+        setGridPositions(newGridPositions);
+        // Update states of the game
+        setIndexSelected(-1);
+        setStep(1);
+        var flag = checkWin();
+        if (flag === 1){
+            setStep(3);
+        } else if (flag === 2){
+            setStep(4);
+        };
+    }
+    function getChar() {
+        const char = piecesInfo[indexSelected].char;
+        var text = ""
+        char[0] === "D" ? (text += "dark, ") : (text += "light, ");
+        char[1] === "R" ? (text += "round, ") : (text += "square, ");
+        char[2] === "T" ? (text += "tall, ") : (text += "short, ");
+        char[3] === "S" ? (text += "solid") : (text += "hollow");
+        return text
+    }
 
     return (
         <section className="w-full h-screen">
             <div className="w-full fixed flex flex-col items-center self-center bottom-0 pb-8 z-10">
-                <Notification text="Player 1's turn: Pick a piece"/>
+                <Notification text={(
+                    step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : 
+                    step === 2 ? (`Player ${playerTurn}'s turn: Place the ${getChar()} piece.`) : 
+                    step === 3 ? (`Player ${playerTurn} win!`) : (`Draw!`)
+                )}/>
             </div>
             <Canvas className="w-full h-screen bg-transparent relative">
                 <Suspense fallback={<Loader />}>
@@ -208,20 +329,17 @@ const Quarto = (props) => {
                         <mesh
                             geometry={nodes.Object_4.geometry}
                             material={materials.Wood_procedural_Table}
-                            onPointerEnter={(e) => {
-                                piecesInfo[1].position = [-0.209, 0.021, -0.208];
-                            }}
                         />
                         <mesh
                             geometry={nodes.Object_6.geometry}
                             material={materials.Smooth_Gold}
                             position={[0, -0.003, 0]}
                         />
-                        {gridPositions.map((position) => (
-                            <Grid {...position} materials={materials} step={step}/>
+                        {gridPositions.map((data, i) => (
+                            <Grid {...data} materials={materials} step={step} index={i} handleClick={handleGridClick} />
                         ))}
-                        {piecesInfo.map((data) => (
-                            <Piece {...data} step={step} />
+                        {piecesInfo.map((data, i) => (
+                            <Piece {...data} step={step} index={i} handleClick={handlePieceClick} indexSelected={indexSelected} />
                         ))}
                     </a.group>
                     <Environment preset="dawn" background blur={1} />
