@@ -7,8 +7,8 @@ export default function App() {
   return (
       <div className="App">
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/game" element={<Game />} />
+          <Route path="" element={<Home />} />
+          <Route path="game" element={<Game />} />
         </Routes>
       </div>
   );
