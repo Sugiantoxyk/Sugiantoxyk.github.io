@@ -4,10 +4,10 @@ import { useState } from 'react';
 
 import styles from '../styles/styles';
 import { navVariants, menuBackgroundVariants, menuListVariants } from '../styles/motion';
-import { MenuButton } from '../components';
+import { MenuButton } from '.';
 import { menuItems } from '../constants';
 
-function Navbar() {
+function Navbar({bg=true}) {
     const [isMenuOpen, setMenuOpen] = useState(false);
     const handleClick = (index) => {
         setMenuOpen(!isMenuOpen);
@@ -27,7 +27,7 @@ function Navbar() {
             whileInView="show"
             className={`${styles.xPaddings} py-8 top-0 fixed w-[100%] select-none z-20`}
         >
-            <div className="navbar-gradient absolute w-[100%] inset-0" />
+            <div className={bg === true ? ("navbar-dark-gradient absolute w-[100%] inset-0") : ("absolute w-[100%] inset-0")} />
 
             {/* Menu Section */}
             <motion.div

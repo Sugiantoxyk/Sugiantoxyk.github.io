@@ -15,4 +15,4 @@ const TechStackLogos = ({ url, alt, title, type="large" }) => (
   }/>
 );
 
-export { TechStackLogos };
+export default TechStackLogos;

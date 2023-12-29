@@ -19,7 +19,7 @@ const styles = {
 
     // hero section
     heroPretitle:
-        'font-thin lg:text-[24px] md:text-[24px] sm:text-[16px] text-[16px] text-violet-700',
+        'font-thin lg:text-[24px] md:text-[24px] sm:text-[16px] text-[16px] text-dark-primary',
     heroName:
         'font-bold lg:text-[60px] md:text-[60px] sm:text-[44px] text-[44px] py-4 text-white',
     heroSubtitle:
@@ -33,7 +33,7 @@ const styles = {
     preTitle:
         'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] uppercase text-white',
     mainTitle:
-        'font-bold lg:text-[60px] md:text-[60px] sm:text-[44px] text-[44px] text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-indigo-600',
+        'font-bold lg:text-[60px] md:text-[60px] sm:text-[44px] text-[44px] text-transparent bg-clip-text bg-gradient-to-r from-dark-secondary to-indigo-600',
     subTitle:
         'font-thin lg:text-[28px] md:text-[28px] sm:text-[18px] text-[18px] text-white',
 
@@ -45,7 +45,7 @@ const styles = {
 
     // buttons
     button1:
-        'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] py-2 px-10 border-2 border-violet-700 rounded-xl text-white',
+        'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] py-2 px-10 border-2 border-dark-primary rounded-xl text-white',
 
 };
   

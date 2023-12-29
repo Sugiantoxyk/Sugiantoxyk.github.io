@@ -32,7 +32,7 @@ const WorkCard = ({ url, alt, techUrl, title, subTitle, texts, index }) => (
             <div className="pt-4 flex flex-col gap-4">
                 {texts.map((sentence) => (
                     <div className="flex flex-row gap-2">
-                        <div className="border-2 rounded-full border-violet-700" />
+                        <div className="border-2 rounded-full border-dark-primary" />
                         <p className="text-white font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px]">{sentence}</p>
                     </div>
                 ))}
@@ -52,4 +52,4 @@ const WorkCard = ({ url, alt, techUrl, title, subTitle, texts, index }) => (
     </motion.div>
 );
   
-export { WorkCard };
+export default WorkCard;

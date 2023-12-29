@@ -21,4 +21,4 @@ const ConnectionLogos = ({ url, alt, href, type="large" }) => (
   </a>
 );
 
-export { ConnectionLogos };
+export default ConnectionLogos;

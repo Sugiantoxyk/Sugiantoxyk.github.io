@@ -89,4 +89,4 @@ const MenuButton = ({
   );
 };
 
-export { MenuButton };
+export default MenuButton;

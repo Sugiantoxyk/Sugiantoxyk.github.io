@@ -43,7 +43,7 @@ const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, act
                     <div className="pt-4 flex flex-col gap-4 invisible 2xl:visible">
                         {texts.map((sentence) => (
                             <div className="flex flex-row gap-2">
-                                <div className="border-2 rounded-full border-violet-700" />
+                                <div className="border-2 rounded-full border-dark-primary" />
                                 <p className="text-white font-thin">{sentence}</p>
                             </div>
                         ))}
@@ -53,4 +53,4 @@ const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, act
     </motion.div>
   );
   
-  export { ProjectCard };
+  export default ProjectCard;

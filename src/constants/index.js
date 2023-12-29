@@ -219,7 +219,7 @@ export const otherSkills = [
 export const projects = [
   {
     id: "project-1",
-    url: "/project1.png",
+    url: "/project/project1.png",
     alt: "project1",
     techUrl: [
       {
@@ -239,7 +239,7 @@ export const projects = [
   },
   {
     id: "project-2",
-    url: "/project2.png",
+    url: "/project/project2.png",
     alt: "project2",
     techUrl: [
       {
@@ -267,7 +267,7 @@ export const projects = [
   },
   {
     id: "project-3",
-    url: "/project3.png",
+    url: "/project/project3.png",
     alt: "project3",
     techUrl: [
       {
@@ -295,7 +295,7 @@ export const projects = [
   },
   {
     id: "project-4",
-    url: "/project4.png",
+    url: "/project/project4.png",
     alt: "project4",
     techUrl: [
       {
@@ -333,7 +333,7 @@ export const projects = [
   },
   {
     id: "project-5",
-    url: "/project5.png",
+    url: "/project/project5.png",
     alt: "project5",
     techUrl: [
       {
@@ -363,7 +363,7 @@ export const projects = [
 
 export const works = [
   {
-    url: "/oc.png",
+    url: "/company/oc.png",
     alt: "work1",
     techUrl: [
       {
@@ -402,7 +402,7 @@ export const works = [
     ],
   },
   {
-    url: "/ey.png",
+    url: "/company/ey.png",
     alt: "work2",
     techUrl: [
       {
