@@ -7,7 +7,6 @@ function Game() {
             <Navbar bg={false} />
             <Quarto />
         </section>
-
     )
 };
 
