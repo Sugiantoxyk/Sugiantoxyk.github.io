@@ -8,6 +8,7 @@ import PingLatest from './PingLatest.jsx';
 import Button from './Button.jsx';
 import Loader from './Loader.jsx';
 import Notification from './Notification.jsx';
+import ColorPalette from './ColorPalete.jsx';
 
 export {
     Navbar,
@@ -20,4 +21,5 @@ export {
     Button,
     Loader,
     Notification,
+    ColorPalette,
 } 

@@ -6,11 +6,13 @@ import React, { useRef, useState, useEffect, Suspense } from "react";
 import { useGLTF, CameraControls, Environment } from "@react-three/drei";
 import { a } from '@react-spring/three';
 import { Canvas } from "@react-three/fiber";
+import * as THREE from 'three';
 
 import quartoScene from './quarto.glb';
 import Grid from "./Grid";
 import Piece from "./Piece";
-import { Loader, Notification } from "../index";
+import { Loader, Notification, ColorPalette } from "../index";
+import styles from "../../styles/styles";
 
 function getWindowSize() {
     const {innerWidth, innerHeight} = window;
@@ -51,6 +53,35 @@ const Quarto = (props) => {
     const quartoRef = useRef();
     const { nodes, materials } = useGLTF(quartoScene);
     const [boardScale, boardPosition, boardRotation] = adjustBoardForScreenSize();
+
+    // Color states
+    const [selectedPalette, setSelectedPalette] = useState(0);
+    const palettes = [
+        {
+            preset: "dawn",
+            from: "from-purple-400",
+            to: "to-purple-100",
+            colors: [new THREE.Color( "#FFFFFF" ), new THREE.Color( "#8361FF" ), new THREE.Color( "#7D5DB1" ), new THREE.Color( "#DBC7FF" )],
+        },
+        {
+            preset: "apartment",
+            from: "from-amber-700",
+            to: "to-orange-200",
+            colors: [new THREE.Color( "#422006" ), new THREE.Color( "#fed7aa" ), new THREE.Color( "#854d0e" ), new THREE.Color( "#fed7aa" )],
+        },
+        {
+            preset: "park",
+            from: "from-emerald-700",
+            to: "to-emerald-200",
+            colors: [new THREE.Color( "#052e16" ), new THREE.Color( "#a7f3d0" ), new THREE.Color( "#065f46" ), new THREE.Color( "#a7f3d0" )],
+        },
+    ];
+    materials.Wood_procedural_Table.color = palettes[selectedPalette].colors[0];
+    materials.Smooth_Gold.color = palettes[selectedPalette].colors[1];
+    materials.Wood_procedural.color = palettes[selectedPalette].colors[2];
+    materials.Wood_procedural_lighter.color = palettes[selectedPalette].colors[3];
+    
+    // Game pieces and grids information
     const initialGridPositions = [
         {position: [-0.209, 0.021, -0.208], piece: "", win: 0},
         {position: [-0.07, 0.021, -0.208], piece: "", win: 0},
@@ -77,7 +108,7 @@ const Quarto = (props) => {
             material: materials.Wood_procedural_lighter,
             position: [-0.209, 0.045, -0.508],
             rotation: [-Math.PI, 0, 0],
-            scale: [-0.028, 0.028, 0.028],
+            scale: [-0.028, 0.038, 0.028],
         }, 
         {
             char: "DSTS",
@@ -86,7 +117,7 @@ const Quarto = (props) => {
             material: materials.Wood_procedural,
             position: [-0.069, 0.045, -0.508],
             rotation: [-Math.PI, 0, 0],
-            scale: [-0.028, 0.028, 0.028],
+            scale: [-0.028, 0.038, 0.028],
         }, 
         {
             char: "LSTH",
@@ -95,7 +126,7 @@ const Quarto = (props) => {
             material: materials.Wood_procedural_lighter,
             position: [0.069, 0.045, -0.508],
             rotation: [-Math.PI, 0, 0],
-            scale: [-0.028, 0.028, 0.028],
+            scale: [-0.028, 0.038, 0.028],
         }, 
         {
             char: "DSTH",
@@ -104,16 +135,16 @@ const Quarto = (props) => {
             material: materials.Wood_procedural,
             position: [0.208, 0.045, -0.508],
             rotation: [-Math.PI, 0, 0],
-            scale: [-0.028, 0.028, 0.028],
+            scale: [-0.028, 0.038, 0.028],
         }, 
         {
-            char: "LSSS",
+            char: "DRTS",
             grid: -1,
-            geometry: nodes.Object_20.geometry,
-            material: materials.Wood_procedural_lighter,
+            geometry: nodes.Object_30.geometry,
+            material: materials.Wood_procedural,
             position: [0.507, 0.045, -0.208],
-            rotation: [-Math.PI, 0, 0],
-            scale: [-0.028, 0.028, 0.028],
+            rotation: [0, 0, 0],
+            scale: [0.029, 0.039, 0.029],
         },  
         {
             char: "LSSH",
@@ -125,14 +156,14 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         },  
         {
-            char: "DSSS",
+            char: "LRTS",
             grid: -1,
-            geometry: nodes.Object_24.geometry,
-            material: materials.Wood_procedural,
+            geometry: nodes.Object_28.geometry,
+            material: materials.Wood_procedural_lighter,
             position: [0.507, 0.045, -0.067],
-            rotation: [-Math.PI, 0, 0],
-            scale: [-0.028, 0.028, 0.028],
-        }, 
+            rotation: [0, 0, 0],
+            scale: [0.029, 0.039, 0.029],
+        },  
         {
             char: "DSSH",
             grid: -1,
@@ -143,22 +174,22 @@ const Quarto = (props) => {
             scale: [-0.028, 0.028, 0.028],
         }, 
         {
-            char: "LRTS",
+            char: "DSSS",
             grid: -1,
-            geometry: nodes.Object_28.geometry,
-            material: materials.Wood_procedural_lighter,
-            position: [-0.509, 0.046, 0.071],
-            rotation: [0, 0, 0],
-            scale: [0.029, 0.029, 0.029],
-        },  
-        {
-            char: "DRTS",
-            grid: -1,
-            geometry: nodes.Object_30.geometry,
+            geometry: nodes.Object_24.geometry,
             material: materials.Wood_procedural,
+            position: [-0.509, 0.046, 0.071],
+            rotation: [-Math.PI, 0, 0],
+            scale: [-0.028, 0.028, 0.028],
+        }, 
+        {
+            char: "LSSS",
+            grid: -1,
+            geometry: nodes.Object_20.geometry,
+            material: materials.Wood_procedural_lighter,
             position: [-0.509, 0.046, 0.211],
-            rotation: [0, 0, 0],
-            scale: [0.029, 0.029, 0.029],
+            rotation: [-Math.PI, 0, 0],
+            scale: [-0.028, 0.028, 0.028],
         },  
         {
             char: "LRTH",
@@ -167,7 +198,7 @@ const Quarto = (props) => {
             material: materials.Wood_procedural_lighter,
             position: [0.508, 0.046, 0.211],
             rotation: [0, 0, 0],
-            scale: [0.029, 0.029, 0.029],
+            scale: [0.029, 0.039, 0.029],
         }, 
         {
             char: "DRTH",
@@ -176,7 +207,7 @@ const Quarto = (props) => {
             material: materials.Wood_procedural,
             position: [0.508, 0.046, 0.071],
             rotation: [0, 0, 0],
-            scale: [0.029, 0.029, 0.029],
+            scale: [0.029, 0.039, 0.029],
         }, 
         {
             char: "LRSS",
@@ -215,6 +246,8 @@ const Quarto = (props) => {
             scale: [0.029, 0.029, 0.029],
         }, 
     ];
+
+    // Game states
     const [step, setStep] = useState(1);
     const [playerTurn, setPlayerTurn] = useState(1);
     const [indexSelected, setIndexSelected] = useState(-1);
@@ -222,10 +255,6 @@ const Quarto = (props) => {
     const [piecesInfo, setPiecesInfo] = useState(initialPiecesInfo);
 
     function checkSame(indexes) {
-        console.log(indexes);
-        for (const i of indexes) {
-            console.log(gridPositions[i].piece);
-        }
         if (indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[0] === gridPositions[indexes[0]].piece[0])) ||
             indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[1] === gridPositions[indexes[0]].piece[1])) ||
             indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[2] === gridPositions[indexes[0]].piece[2])) ||
@@ -236,27 +265,28 @@ const Quarto = (props) => {
         } else return false;
     }
     function checkWin() {
+        var indexes = [];
         // Check if a player win or draw
         for (const i of [0,4,8,12]) {
-            var indexes = [];
+            indexes = [];
             for (let j=0; j<4; j++) {
                 indexes.push(i+j);
             }
             if (checkSame(indexes)) return 1;
         }
         for (let i=0; i<4; i++) {
-            var indexes = [];
+            indexes = [];
             for (const j of [0,4,8,12]) {
                 indexes.push(i+j);
             }
             if (checkSame(indexes)) return 1;
         }
-        var indexes = [];
+        indexes = [];
         for (let i=0; i<16; i+=5) {
             indexes.push(i);
         }
         if (checkSame(indexes)) return 1;
-        var indexes = [];
+        indexes = [];
         for (let i=3; i<13; i+=3) {
             indexes.push(i);
         }
@@ -305,19 +335,30 @@ const Quarto = (props) => {
 
     return (
         <section className="w-full h-screen">
-            <div className="w-full fixed flex flex-col items-center self-center bottom-0 pb-8 z-10">
-                <Notification text={(
-                    step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : 
-                    step === 2 ? (`Player ${playerTurn}'s turn: Place the ${getChar()} piece.`) : 
-                    step === 3 ? (`Player ${playerTurn} win!`) : (`Draw!`)
-                )}/>
+            <div className={`${styles.xPaddings} w-full fixed bottom-0 pb-8 z-10 grid grid-cols-4 gap-4`}>
+                <div className="flex flex-row gap-2">
+                    {palettes.map((data, i) => {
+                        return <ColorPalette data={data} index={i} handleClick={(i) => setSelectedPalette(i)} selected={selectedPalette}/>
+                    })}
+                </div>
+                <div className="col-span-2 justify-self-center">
+                    <Notification text={(
+                        step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : 
+                        step === 2 ? (`Player ${playerTurn}'s turn: Place the ${getChar()} piece.`) : 
+                        step === 3 ? (`Player ${playerTurn} win!`) : (`Draw!`)
+                    )}/>
+                </div>
+                <div>
+
+                </div>
+                {/* <ColorPalette /> */}
             </div>
             <Canvas className="w-full h-screen bg-transparent relative">
                 <Suspense fallback={<Loader />}>
-                <CameraControls  
-                    minDistance={3} maxDistance={10}
-                    minPolarAngle={0} maxPolarAngle={1.5}
-                />
+                    <CameraControls  
+                        minDistance={3} maxDistance={10}
+                        minPolarAngle={0} maxPolarAngle={1.5}
+                    />
                     <directionalLight position={[-1, 2, -3]} intensity={1} />
                     <ambientLight intensity={2} />
                     <a.group {...props} 
@@ -342,7 +383,7 @@ const Quarto = (props) => {
                             <Piece {...data} step={step} index={i} handleClick={handlePieceClick} indexSelected={indexSelected} />
                         ))}
                     </a.group>
-                    <Environment preset="dawn" background blur={1} />
+                    <Environment preset={palettes[selectedPalette].preset} background blur={1} />
                 </Suspense>
             </Canvas>
         </section>

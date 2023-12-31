@@ -14,6 +14,7 @@ const Piece = ({grid, geometry, material, position, rotation, scale, step, index
             ref.current.rotation.y = rotation[2];
         }
     });
+    
     return (
         <mesh
             ref={ref}
