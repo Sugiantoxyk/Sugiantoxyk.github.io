@@ -227,7 +227,7 @@ export const otherSkills = [
   },
 ];
 
-export const projects = [
+export const schoolProjects = [
   {
     id: "project-1",
     url: "/project/project1.png",
@@ -369,6 +369,27 @@ export const projects = [
       "Programmed and constructed an iOS application using Swift language with Xcode IDE; deployed ‘Yoga Tracker’ to evaluate users’ yoga poses using Human Pose Estimation with Computer Vision.",
       "Acknowledged by the school and featured in the NYP Open House event; participated in Splash Awards 2019 with this project.",
     ],
+  },
+];
+
+export const personalProjects = [
+  {
+    url: "/project/quarto.png",
+    alt: "quarto",
+    title: "Quarto",
+    href: "/quarto",
+  },
+  {
+    url: "/project/grid.jpeg",
+    alt: "comingsoon",
+    title: "Coming Soon",
+    href: null,
+  },
+  {
+    url: "/project/grid.jpeg",
+    alt: "comingsoon",
+    title: "Coming Soon",
+    href: null,
   },
 ];
 

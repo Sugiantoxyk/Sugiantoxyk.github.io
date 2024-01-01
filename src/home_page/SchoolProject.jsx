@@ -5,9 +5,10 @@ import { motion } from 'framer-motion';
 import { fadeIn, staggerContainer } from '../styles/motion';
 import styles from '../styles/styles';
 import { ProjectCard } from '../components';
-import { projects } from '../constants';
+import { schoolProjects } from '../constants';
 
-const Project = () => {
+const SchoolProject = () => {
+    // School projects state
     const [active, setActive] = useState('project-3');
 
     return (
@@ -46,40 +47,18 @@ const Project = () => {
                 whileInView="show"
                 viewport={{ once: false, amount: 0.25 }}
             >
-                {projects.map((world, index) => (
+                {schoolProjects.map((project, index) => (
                     <ProjectCard
-                    key={world.id}
-                    {...world}
+                    key={project.id}
+                    {...project}
                     index={index}
                     active={active}
                     handleClick={setActive}
                     />
                 ))}
             </motion.div>
-
-            {/* Personal projects */}
-            <motion.div 
-                className={`${styles.innerWidth} pt-5 mx-auto flex flex-col`}
-                variants={staggerContainer}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: false, amount: 0.25 }}
-            >
-                <motion.h1 
-                    className={`${styles.mainTitle}`}
-                    variants={fadeIn("up", "tween", 0.2, 1)}
-                >
-                    My Projects
-                </motion.h1>
-                <motion.h1 
-                    className={`${styles.subTitle}`}
-                    variants={fadeIn("up", "tween", 0.4, 1)}
-                >
-                    Explore my passion.
-                </motion.h1>
-            </motion.div>
         </section>
     );
 };
 
-export default Project;
+export default SchoolProject;

@@ -1,9 +1,9 @@
 
-import { Navbar, Hero, Introduction, Skill, Project, Work, Resume, Contact, Footer } from './index'
+import { Navbar, Hero, Introduction, Skill, SchoolProject, PersonalProject, Work, Resume, Contact, Footer } from './index'
 
 function Home() {
     return (
-        <div className="overflow-hidden">
+        <div className="overflow-x-clip">
             <Navbar />
             <div className="relative">
                 <Hero />
@@ -18,7 +18,11 @@ function Home() {
             </div>
             <div className="relative">
                 <div className="gradient-05 z-0" />
-                <Project />
+                <SchoolProject />
+            </div>
+            <div className="relative">
+                <div className="gradient-02 z-0" />
+                <PersonalProject />
             </div>
             <div className="relative">
                 <div className="gradient-04 z-0" />

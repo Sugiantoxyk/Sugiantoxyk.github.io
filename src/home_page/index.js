@@ -2,7 +2,8 @@ import { Navbar } from '../components';
 import Hero from './Hero.jsx';
 import Introduction from './Introduction.jsx';
 import Skill from './Skill.jsx';
-import Project from './Project.jsx';
+import SchoolProject from './SchoolProject.jsx';
+import PersonalProject from './PersonalProject.jsx';
 import Work from './Work.jsx';
 import Resume from './Resume.jsx';
 import Contact from './Contact.jsx';
@@ -13,7 +14,8 @@ export {
     Hero,
     Introduction,
     Skill,
-    Project,
+    SchoolProject,
+    PersonalProject,
     Work,
     Resume,
     Contact,
