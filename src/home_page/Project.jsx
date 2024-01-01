@@ -12,6 +12,7 @@ const Project = () => {
 
     return (
         <section id="projects" className={`${styles.paddings} relative select-none`}>
+            {/* School projects */}
             <motion.div 
                 className={`${styles.innerWidth} pt-5 mx-auto flex flex-col`}
                 variants={staggerContainer}
@@ -29,7 +30,7 @@ const Project = () => {
                     className={`${styles.mainTitle}`}
                     variants={fadeIn("up", "tween", 0.4, 1)}
                 >
-                    My Projects
+                    School Projects
                 </motion.h1>
                 <motion.h1 
                     className={`${styles.subTitle}`}
@@ -54,6 +55,28 @@ const Project = () => {
                     handleClick={setActive}
                     />
                 ))}
+            </motion.div>
+
+            {/* Personal projects */}
+            <motion.div 
+                className={`${styles.innerWidth} pt-5 mx-auto flex flex-col`}
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: false, amount: 0.25 }}
+            >
+                <motion.h1 
+                    className={`${styles.mainTitle}`}
+                    variants={fadeIn("up", "tween", 0.2, 1)}
+                >
+                    My Projects
+                </motion.h1>
+                <motion.h1 
+                    className={`${styles.subTitle}`}
+                    variants={fadeIn("up", "tween", 0.4, 1)}
+                >
+                    Explore my passion.
+                </motion.h1>
             </motion.div>
         </section>
     );

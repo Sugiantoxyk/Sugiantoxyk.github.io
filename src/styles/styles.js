@@ -46,7 +46,12 @@ const styles = {
     // buttons
     button1:
         'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] py-2 px-10 border-2 border-dark-primary rounded-xl text-white',
+    button2:
+        'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] py-4 w-[90%] bg-dark-primary rounded-full text-white my-2',
 
+    // game menu
+    gameMenuTitle:
+        'font-bold lg:text-[80px] md:text-[80px] sm:text-[60px] text-[60px] text-transparent bg-clip-text bg-gradient-to-r from-dark-secondary to-indigo-600'
 };
   
   export default styles;

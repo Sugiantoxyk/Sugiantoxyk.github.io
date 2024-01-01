@@ -1,27 +1,38 @@
-export const menuItems = [
+export const homeMenuItems = [
   {
     title: "Home",
-    ref: "home",
+    ref: "/#home",
   },
   {
     title: "Skills",
-    ref: "skills",
+    ref: "/#skills",
   },
   {
     title: "Projects",
-    ref: "projects",
+    ref: "/#projects",
   },
   {
     title: "Work",
-    ref: "work",
+    ref: "/#work",
   },
   {
     title: "Resume",
-    ref: "resume",
+    ref: "/#resume",
   },
   {
     title: "Contact",
-    ref: "contact",
+    ref: "/#contact",
+  },
+];
+
+export const gameMenuItems = [
+  {
+    title: "Home",
+    ref: "/",
+  },
+  {
+    title: "Quarto",
+    ref: "/quarto",
   },
 ];
 
@@ -150,11 +161,11 @@ export const databaseSkills = [
     alt: "firebase",
     title: "Firebase",
   },
-  {
-    url: "/tech/transparent.svg",
-    alt: "transparent",
-    title: "Transparent",
-  },
+  // {
+  //   url: "/tech/transparent.svg",
+  //   alt: "transparent",
+  //   title: "Transparent",
+  // },
 ];
 
 export const cloudSkills = [
@@ -196,11 +207,11 @@ export const applicationSkills = [
     alt: "jira",
     title: "Jira",
   },
-  {
-    url: "/tech/transparent.svg",
-    alt: "transparent",
-    title: "Transparent",
-  },
+  // {
+  //   url: "/tech/transparent.svg",
+  //   alt: "transparent",
+  //   title: "Transparent",
+  // },
 ];
 
 export const otherSkills = [
@@ -425,3 +436,22 @@ export const works = [
     ],
   },
 ];
+
+export const gameMenu = {
+  "quarto" : {
+    title: "Quarto",
+    items: [
+      {
+        key: "2p",
+        text: "2 player",
+        ref: null,
+      },
+      {
+        key: "htp",
+        text: "How to play",
+        ref: "https://www.ultraboardgames.com/quarto/game-rules.php",
+      },
+    ],
+    footer: "made by Sugianto"
+  },
+};

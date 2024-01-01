@@ -30,6 +30,11 @@ body {
     background-color: rgba(0, 0, 0, 0.9);
 }
 
+/* Game menu shade */
+.gameMenu-shade {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 8px;

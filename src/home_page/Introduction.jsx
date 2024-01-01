@@ -10,7 +10,7 @@ const Introduction = () => {
         target: ref,
         offset: ["center 1", "center 0.8"],
     });
-    const scaleOpacity = useTransform(scrollYProgress, [0, 1], [0, 1])
+    const scaleOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
     return (
         <motion.section 

@@ -9,6 +9,7 @@ import Button from './Button.jsx';
 import Loader from './Loader.jsx';
 import Notification from './Notification.jsx';
 import ColorPalette from './ColorPalete.jsx';
+import GameMenu from './GameMenu.jsx';
 
 export {
     Navbar,
@@ -22,4 +23,5 @@ export {
     Loader,
     Notification,
     ColorPalette,
+    GameMenu,
 } 

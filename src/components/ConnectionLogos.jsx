@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const ConnectionLogos = ({ url, alt, href, type="large" }) => (
   <a href={href} target="_blank" rel="noreferrer" draggable="false" >
-    <motion.img 
+    <motion.img
       src={url} 
       alt={alt} 
       draggable="false" 

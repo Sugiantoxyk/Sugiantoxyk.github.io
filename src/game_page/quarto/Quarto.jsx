@@ -6,13 +6,16 @@ import React, { useRef, useState, useEffect, Suspense } from "react";
 import { useGLTF, CameraControls, Environment } from "@react-three/drei";
 import { a } from '@react-spring/three';
 import { Canvas } from "@react-three/fiber";
+import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from 'three';
 
 import quartoScene from './quarto.glb';
 import Grid from "./Grid";
 import Piece from "./Piece";
-import { Loader, Notification, ColorPalette } from "../index";
+import { Navbar, Notification, ColorPalette, GameMenu, Loader } from "../index";
 import styles from "../../styles/styles";
+import { gameMenu } from "../../constants";
+import { simpleInOut } from "../../styles/motion";
 
 function getWindowSize() {
     const {innerWidth, innerHeight} = window;
@@ -248,12 +251,34 @@ const Quarto = (props) => {
     ];
 
     // Game states
-    const [step, setStep] = useState(1);
+    const [isHelperVisible, setHelperVisible] = useState(false);
+    const [step, setStep] = useState(0);
     const [playerTurn, setPlayerTurn] = useState(1);
     const [indexSelected, setIndexSelected] = useState(-1);
     const [gridPositions, setGridPositions] = useState(initialGridPositions);
     const [piecesInfo, setPiecesInfo] = useState(initialPiecesInfo);
 
+    // Helpter functions
+    useEffect(() => {
+        // This useEffect function will set 'navigate' image to hidden after user managed to click and hold to rotate canvas
+        function handleCanvasTouch() {
+            setHelperVisible(false);
+        }
+        
+        // mousedown event for PC
+        window.addEventListener('mousedown', handleCanvasTouch);
+        // touchmove event for mobile
+        window.addEventListener('touchmove', handleCanvasTouch);
+    
+        return () => {
+            window.removeEventListener('mousedown', handleCanvasTouch);
+            window.removeEventListener('touchmove', handleCanvasTouch);
+        };
+    }, []);
+    function startGame() { 
+        setStep(1);
+        setHelperVisible(true);
+    }
     function checkSame(indexes) {
         if (indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[0] === gridPositions[indexes[0]].piece[0])) ||
             indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[1] === gridPositions[indexes[0]].piece[1])) ||
@@ -324,6 +349,7 @@ const Quarto = (props) => {
         };
     }
     function getChar() {
+        // Helper function to return the characteristics of the piece selected
         const char = piecesInfo[indexSelected].char;
         var text = ""
         char[0] === "D" ? (text += "dark, ") : (text += "light, ");
@@ -335,57 +361,82 @@ const Quarto = (props) => {
 
     return (
         <section className="w-full h-screen">
-            <div className={`${styles.xPaddings} w-full fixed bottom-0 pb-8 z-10 grid grid-cols-4 gap-4`}>
-                <div className="flex flex-row gap-2">
-                    {palettes.map((data, i) => {
-                        return <ColorPalette data={data} index={i} handleClick={(i) => setSelectedPalette(i)} selected={selectedPalette}/>
-                    })}
+            <Navbar bg={false} home={false}/>
+            <section className="w-full h-screen">
+                {/* Game's menu */}
+                {
+                    step === 0 && <GameMenu data={gameMenu["quarto"]} startGame={startGame}/>
+                }
+                {/* Helper image */}
+                {
+                    <AnimatePresence>
+                        {isHelperVisible && <motion.img 
+                            src="/navigate.svg" 
+                            alt="navigate"
+                            draggable="false" 
+                            className="w-52 h-52 rounded-full fixed m-auto inset-x-0 inset-y-0 z-10 pointer-events-none"
+                            initial="hidden"
+                            whileInView="show"
+                            exit="hidden"
+                            variants={simpleInOut("tween", 0.2, 0.5)}
+                        />}
+                    </AnimatePresence>
+                }
+                {/* Footer */}
+                <div className={`${styles.xPaddings} w-full fixed bottom-0 pb-8 z-10 pointer-events-none`}>
+                    <div className={`${styles.innerWidth} mx-auto grid grid-cols-1 md:grid-cols-4 gap-4`}>
+                        <div className="flex flex-row gap-2">
+                            {palettes.map((data, i) => {
+                                return <ColorPalette data={data} index={i} handleClick={(i) => setSelectedPalette(i)} selected={selectedPalette}/>
+                            })}
+                        </div>
+                        <div className="col-span-2 justify-self-center">
+                            {
+                                step !== 0 &&
+                                <Notification text={(
+                                    step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : 
+                                    step === 2 ? (`Player ${playerTurn}'s turn: Place the ${getChar()} piece.`) : 
+                                    step === 3 ? (`Player ${playerTurn} win!`) : (`Draw!`)
+                                )}/>
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div className="col-span-2 justify-self-center">
-                    <Notification text={(
-                        step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : 
-                        step === 2 ? (`Player ${playerTurn}'s turn: Place the ${getChar()} piece.`) : 
-                        step === 3 ? (`Player ${playerTurn} win!`) : (`Draw!`)
-                    )}/>
-                </div>
-                <div>
-
-                </div>
-                {/* <ColorPalette /> */}
-            </div>
-            <Canvas className="w-full h-screen bg-transparent relative">
-                <Suspense fallback={<Loader />}>
-                    <CameraControls  
-                        minDistance={3} maxDistance={10}
-                        minPolarAngle={0} maxPolarAngle={1.5}
-                    />
-                    <directionalLight position={[-1, 2, -3]} intensity={1} />
-                    <ambientLight intensity={2} />
-                    <a.group {...props} 
-                        ref={quartoRef} 
-                        scale={boardScale}
-                        position={boardPosition}
-                        rotation={boardRotation}
-                    >
-                        <mesh
-                            geometry={nodes.Object_4.geometry}
-                            material={materials.Wood_procedural_Table}
+                {/* Game scene */}
+                <Canvas className="w-full h-screen bg-transparent relative">
+                    <Suspense fallback={step !== 0 && <Loader />}>
+                        <CameraControls
+                            minDistance={3} maxDistance={10}
+                            minPolarAngle={0} maxPolarAngle={1.5}
                         />
-                        <mesh
-                            geometry={nodes.Object_6.geometry}
-                            material={materials.Smooth_Gold}
-                            position={[0, -0.003, 0]}
-                        />
-                        {gridPositions.map((data, i) => (
-                            <Grid {...data} materials={materials} step={step} index={i} handleClick={handleGridClick} />
-                        ))}
-                        {piecesInfo.map((data, i) => (
-                            <Piece {...data} step={step} index={i} handleClick={handlePieceClick} indexSelected={indexSelected} />
-                        ))}
-                    </a.group>
-                    <Environment preset={palettes[selectedPalette].preset} background blur={1} />
-                </Suspense>
-            </Canvas>
+                        <directionalLight position={[-1, 2, -3]} intensity={1} />
+                        <ambientLight intensity={2} />
+                        <a.group {...props} 
+                            ref={quartoRef} 
+                            scale={boardScale}
+                            position={boardPosition}
+                            rotation={boardRotation}
+                        >
+                            <mesh
+                                geometry={nodes.Object_4.geometry}
+                                material={materials.Wood_procedural_Table}
+                            />
+                            <mesh
+                                geometry={nodes.Object_6.geometry}
+                                material={materials.Smooth_Gold}
+                                position={[0, -0.003, 0]}
+                            />
+                            {gridPositions.map((data, i) => (
+                                <Grid {...data} materials={materials} step={step} index={i} handleClick={handleGridClick} />
+                            ))}
+                            {piecesInfo.map((data, i) => (
+                                <Piece {...data} step={step} index={i} handleClick={handlePieceClick} indexSelected={indexSelected} />
+                            ))}
+                        </a.group>
+                        <Environment preset={palettes[selectedPalette].preset} background blur={1} />
+                    </Suspense>
+                </Canvas>
+            </section>
         </section>
     );
 }

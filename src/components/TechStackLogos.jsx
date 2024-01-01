@@ -2,7 +2,7 @@
 import styles from '../styles/styles';
 
 const TechStackLogos = ({ url, alt, title, type="large" }) => (
-  <img 
+  <img
     src={url} 
     alt={alt} 
     draggable="false"

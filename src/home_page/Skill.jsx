@@ -63,7 +63,7 @@ const Skill = () => {
                     </motion.div>
                     
                     {/* 3rd row */}
-                    <div className="flex flex-row flex-wrap gap-6">
+                    <div className="flex flex-row flex-wrap gap-x-24 md:gap-x-28">
                         <motion.div
                             variants={fadeIn("up", "tween", 2, 0.75)}
                         >
@@ -86,7 +86,7 @@ const Skill = () => {
                         </motion.div>
                     </div>
                     {/* 4th row */}
-                    <div className="flex flex-row flex-wrap gap-6">
+                    <div className="flex flex-row flex-wrap gap-x-24 md:gap-x-28">
                         <motion.div
                             variants={fadeIn("up", "tween", 2.5, 0.75)}
                         >

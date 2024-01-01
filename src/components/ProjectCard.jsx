@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 
-import { fadeIn } from '../styles/motion';
+import { staggerContainer, fadeIn } from '../styles/motion';
 import { PingLatest, TechStackLogos } from '.';
 
 const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, active, handleClick }) => (
@@ -12,7 +12,7 @@ const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, act
         onClick={() => handleClick(id)}
         variants={fadeIn("right", "tween", index * 0.5, 0.75)}
     >
-        { index === 0 ? <PingLatest /> : <></>}
+        { index === 0 && <PingLatest />}
         <img
             src={url}
             alt={alt}
@@ -26,29 +26,39 @@ const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, act
                     </h3>
                 </div>
             ) : (
-                <div className="absolute top-0 bottom-0 p-8 flex justify-start w-full flex-col bg-[rgba(0,0,0,0.8)] rounded-[24px]">
-                    <div className="flex flex-row">
+                <motion.div 
+                    className="absolute top-0 bottom-0 p-8 flex justify-start w-full flex-col bg-[rgba(0,0,0,0.8)] rounded-[24px]"
+                    variants={staggerContainer}
+                    initial="hidden"
+                    whileInView="show"
+                >
+                    <motion.div className="flex flex-row" variants={fadeIn("up", "tween", 0.2, 1)}>
                         <h2 className="relative font-semibold sm:text-[32px] text-[24px] text-white">
                             {title}
                         </h2>
-                    </div>
-                    <p className="my-[12px] font-thin text-[16px] leading-[20.16px] text-white uppercase">
+                    </motion.div>
+                    <motion.p className="my-[12px] font-thin text-[16px] leading-[20.16px] text-white uppercase" variants={fadeIn("up", "tween", 0.4, 1)}>
                         {subTitle}
-                    </p>
-                    <div className="flex flex-row flex-wrap gap-4">
+                    </motion.p>
+                    <motion.div className="flex flex-row flex-wrap gap-4" variants={fadeIn("up", "tween", 0.6, 1)}>
                         {techUrl.map((infos) => (
                             <TechStackLogos {...infos} type="small"/>
                         ))}
-                    </div>
-                    <div className="pt-4 flex flex-col gap-4 invisible 2xl:visible">
-                        {texts.map((sentence) => (
-                            <div className="flex flex-row gap-2">
+                    </motion.div>
+                    <motion.div 
+                        className="pt-4 flex flex-col gap-4 invisible 2xl:visible"
+                        variants={staggerContainer}
+                        initial="hidden"
+                        whileInView="show"
+                    >
+                        {texts.map((sentence, i) => (
+                            <motion.div className="flex flex-row gap-2" variants={fadeIn("right", "tween", 0.2 * (i+1) + 1, 1)}>
                                 <div className="border-2 rounded-full border-dark-primary" />
                                 <p className="text-white font-thin">{sentence}</p>
-                            </div>
+                            </motion.div>
                         ))}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             )}
     </motion.div>
   );
