@@ -1,6 +1,4 @@
 
-import { motion } from 'framer-motion';
-
 import { PingLatest } from '.';
 
 const HorizontalCard = ({ url, alt, title, href, index }) => (
