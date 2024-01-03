@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.af50a111.css",
+    "main.css": "/static/css/main.ad2a68ed.css",
     "main.js": "/static/js/main.d1cb2b8d.js",
     "static/media/quarto.glb": "/static/media/quarto.89b256bca3820e1add72.glb",
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.af50a111.css",
+    "static/css/main.ad2a68ed.css",
     "static/js/main.d1cb2b8d.js"
   ]
 }
