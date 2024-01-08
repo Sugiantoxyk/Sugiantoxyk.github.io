@@ -3,12 +3,12 @@ import { motion } from 'framer-motion';
 import styles from '../styles/styles';
 
 const Button = ({text, href="", type=1, handleClick=()=>{}}) => {
-  if (type === 1) {
+  if (type === 1 || type === 3) {
     return (
       <div className="">
         <a href={href} target="_blank" rel="noreferrer" draggable="false" >
           <motion.button
-            className={`${styles.button1} group relative overflow-hidden`}
+            className={`${type === 1 ? (styles.button1) : (styles.button3)} group relative overflow-hidden`}
             whileTap={{
               scale: 0.95,
             }}

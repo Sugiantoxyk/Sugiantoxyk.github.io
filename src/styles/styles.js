@@ -48,6 +48,8 @@ const styles = {
         'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] py-2 px-10 border-2 border-dark-primary rounded-xl text-white',
     button2:
         'font-thin lg:text-[18px] md:text-[18px] sm:text-[14px] text-[14px] py-4 w-[90%] bg-dark-primary rounded-full text-white my-2',
+    button3:
+        'font-thin lg:text-[14px] md:text-[14px] sm:text-[14px] text-[14px] py-2 px-8 border-2 border-dark-primary rounded-xl text-white',
 
     // game menu
     gameMenuTitle:

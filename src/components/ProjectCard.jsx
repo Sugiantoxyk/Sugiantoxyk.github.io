@@ -2,9 +2,9 @@
 import { motion } from 'framer-motion';
 
 import { staggerContainer, fadeIn } from '../styles/motion';
-import { PingLatest, TechStackLogos } from '.';
+import { PingLatest, TechStackLogos, Button } from '.';
 
-const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, active, handleClick }) => (
+const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, link="", index, active, handleClick }) => (
     <motion.div
         className={`relative ${
         active === id ? 'lg:flex-[3.5] flex-[10]' : 'lg:flex-[0.5] flex-[2]'
@@ -46,7 +46,7 @@ const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, act
                         ))}
                     </motion.div>
                     <motion.div 
-                        className="pt-4 flex flex-col gap-4 invisible 2xl:visible"
+                        className="pt-4 flex-col gap-4 hidden 2xl:flex"
                         variants={staggerContainer}
                         initial="hidden"
                         whileInView="show"
@@ -58,6 +58,15 @@ const ProjectCard = ({ id, url, alt, techUrl, title, subTitle, texts, index, act
                             </motion.div>
                         ))}
                     </motion.div>
+                    {
+                        link !== "" &&
+                        <motion.div 
+                            className="pt-8"
+                            variants={fadeIn("up", "tween", 0.8, 1)}
+                        >
+                            <Button text="Video" href={link} type={3}/>
+                        </motion.div>
+                    }
                 </motion.div>
             )}
     </motion.div>

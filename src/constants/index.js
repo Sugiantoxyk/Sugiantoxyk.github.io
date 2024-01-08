@@ -238,6 +238,11 @@ export const schoolProjects = [
         alt: "unity",
         title: "Unity",
       },
+      {
+        url: "/tech/csharp.svg",
+        alt: "c#",
+        title: "C#",
+      },
     ],
     title: "VR Table Tennis Player",
     subTitle: "Final Year Project",
@@ -245,8 +250,9 @@ export const schoolProjects = [
       "Developed an immersive VR table tennis game that includes match play with an AI bot and practice mode with a ball shooter machine using Unity and C# language; responsible for every phase of the project.",
       "Applied Event-driven Programming to enhance game logic and Quaternion Math for rotation calculations.",
       "Achieved high accuracy in the physics of the table tennis ball; completed it within 5 months despite being new to VR Game Development.",
-      "Recognized and approved by the school for the project to be showcased at the upcoming TechIgnite 2024 and NTU Open House event.",
+      // "Recognized and approved by the school for the project to be showcased at the upcoming TechIgnite 2024 and NTU Open House event.",
     ],
+    link: "/project/project1_video.mp4",
   },
   {
     id: "project-2",
@@ -303,6 +309,7 @@ export const schoolProjects = [
       "Created an Android mobile application using Java language with Android Studio IDE; incorporated API with real-time AED location data and Google Maps API for navigation.",
       "Employed the Waterfall SDLC to ensure smooth development; acquired project management and time management skills.",
     ],
+    link: "",
   },
   {
     id: "project-4",
@@ -341,6 +348,7 @@ export const schoolProjects = [
       "Designed and built a C# web application utilizing the Model-View-Controller framework; supported with Bootstrap and jQuery packages for responsive web design; completed within 1.5 months.",
       "Integrated with Microsoft Azure and AWS Cloud services for their AI and Machine Learning services and optimized interface for GPU resource management, virtual machine usage quotas, and automated scheduling.",
     ],
+    link: "",
   },
   {
     id: "project-5",
@@ -369,6 +377,7 @@ export const schoolProjects = [
       "Programmed and constructed an iOS application using Swift language with Xcode IDE; deployed ‘Yoga Tracker’ to evaluate users’ yoga poses using Human Pose Estimation with Computer Vision.",
       "Acknowledged by the school and featured in the NYP Open House event; participated in Splash Awards 2019 with this project.",
     ],
+    link: "",
   },
 ];
 
