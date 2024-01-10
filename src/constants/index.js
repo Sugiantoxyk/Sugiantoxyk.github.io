@@ -309,7 +309,6 @@ export const schoolProjects = [
       "Created an Android mobile application using Java language with Android Studio IDE; incorporated API with real-time AED location data and Google Maps API for navigation.",
       "Employed the Waterfall SDLC to ensure smooth development; acquired project management and time management skills.",
     ],
-    link: "",
   },
   {
     id: "project-4",
@@ -348,7 +347,6 @@ export const schoolProjects = [
       "Designed and built a C# web application utilizing the Model-View-Controller framework; supported with Bootstrap and jQuery packages for responsive web design; completed within 1.5 months.",
       "Integrated with Microsoft Azure and AWS Cloud services for their AI and Machine Learning services and optimized interface for GPU resource management, virtual machine usage quotas, and automated scheduling.",
     ],
-    link: "",
   },
   {
     id: "project-5",
@@ -377,7 +375,6 @@ export const schoolProjects = [
       "Programmed and constructed an iOS application using Swift language with Xcode IDE; deployed ‘Yoga Tracker’ to evaluate users’ yoga poses using Human Pose Estimation with Computer Vision.",
       "Acknowledged by the school and featured in the NYP Open House event; participated in Splash Awards 2019 with this project.",
     ],
-    link: "",
   },
 ];
 
@@ -480,6 +477,22 @@ export const gameMenu = {
         key: "htp",
         text: "How to play",
         ref: "https://www.ultraboardgames.com/quarto/game-rules.php",
+      },
+    ],
+    footer: "made by Sugianto"
+  },
+  "quoridor" : {
+    title: "Quoridor",
+    items: [
+      {
+        key: "2p",
+        text: "2 player",
+        ref: null,
+      },
+      {
+        key: "htp",
+        text: "How to play",
+        ref: "https://www.ultraboardgames.com/quoridor/game-rules.php",
       },
     ],
     footer: "made by Sugianto"
