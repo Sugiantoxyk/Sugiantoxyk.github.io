@@ -29,6 +29,7 @@ const Grid = ({position, piece, win, materials, step, index, handleClick}) => {
                 onClick={(e) => {
                     if(step === 2 && piece === ""){
                         e.stopPropagation();
+                        setHover(false);
                         handleClick(index);
                     }
                 }}
