@@ -25,6 +25,7 @@ const Line = ({position, rotation, hoverPosition, isEdge, nodes, materials, inde
             }
             <mesh
                 geometry={isEdge ? hoverLineEdge : hoverLine }
+                material={materials.Table}
                 position={hoverPosition}
                 rotation={rotation}
                 onPointerEnter={(e) => {
