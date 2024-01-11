@@ -10,9 +10,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from 'three';
 
 import quoridorScene from './quoridor.glb';
-import Player from "./Player";
+import Piece from "./Piece";
 import Grid from "./Grid";
+import Static from "./Static";
 import Wall from "./Wall";
+import Line from "./Line";
 import { Navbar, Notification, ColorPalette, GameMenu, Loader, useBoardTransform } from "../index";
 import styles from "../../styles/styles";
 import { gameMenu } from "../../constants";
@@ -29,32 +31,1511 @@ const Quoridor = (props) => {
             preset: "dawn",
             from: "from-purple-400",
             to: "to-purple-100",
-            colors: [new THREE.Color( "#FFFFFF" ), new THREE.Color( "#8361FF" ), new THREE.Color( "#7D5DB1" )],
+            colors: [new THREE.Color( "#FFFFFF" ), new THREE.Color( "#8361FF" ), new THREE.Color( "#7D5DB1" ), new THREE.Color( "#8b5cf6" )],
         },
         {
             preset: "apartment",
             from: "from-amber-700",
             to: "to-orange-200",
-            colors: [new THREE.Color( "#422006" ), new THREE.Color( "#fed7aa" ), new THREE.Color( "#fef08a" )],
+            colors: [new THREE.Color( "#422006" ), new THREE.Color( "#fed7aa" ), new THREE.Color( "#fef08a" ), new THREE.Color( "#fffbeb" )],
         },
         {
             preset: "park",
             from: "from-emerald-700",
             to: "to-emerald-200",
-            colors: [new THREE.Color( "#052e16" ), new THREE.Color( "#a7f3d0" ), new THREE.Color( "#065f46" )],
+            colors: [new THREE.Color( "#052e16" ), new THREE.Color( "#a7f3d0" ), new THREE.Color( "#065f46" ), new THREE.Color( "#f0fdf4" )],
         },
     ];
-    materials.Wood_procedural_p1.color = new THREE.Color( "#991b1b" );
-    materials.Wood_procedural_p2.color = new THREE.Color( "#ca8a04" );
-    materials.Wood_procedural_table.color = palettes[selectedPalette].colors[0];
-    materials.Smooth.color = palettes[selectedPalette].colors[1];
-    materials.Wood_procedural_wall.color = palettes[selectedPalette].colors[2]; 
+    materials.P1.color = new THREE.Color( "#991b1b" );
+    materials.P2.color = new THREE.Color( "#ca8a04" );
+    materials.Table.color = palettes[selectedPalette].colors[0];
+    materials.Line.color = palettes[selectedPalette].colors[1];
+    materials.Wall.color = palettes[selectedPalette].colors[2]; 
+    materials.Translucent_Wall.color = palettes[selectedPalette].colors[2]; 
+    materials.Hover.color = palettes[selectedPalette].colors[3];
+
+    // Game pieces/grids/lines/walls information
+    const initialPiecesInfo = [
+        {
+            grid: 76,
+            geometry: nodes.Player_1.geometry,
+            material: materials.P1,
+            position: [0, 0, 0.224],
+            rotation: [-Math.PI / 2, 0, 0],
+            scale: 0.005,
+        },
+        {
+            grid: 4,
+            geometry: nodes.Player_2.geometry,
+            material: materials.P2,
+            position: [0, 0, -0.224],
+            rotation: [-Math.PI / 2, 0, 0],
+            scale: 0.005,
+        },
+    ];
+    const initialGridsInfo = [ // walls: [up, down, left, right]
+        // Row 1
+        { available: false, position: [-0.224, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.224], walls: [false, false, false, false] },
+        // Row 2
+        { available: false, position: [-0.224, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.168], walls: [false, false, false, false] },
+        // Row 3
+        { available: false, position: [-0.224, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.112], walls: [false, false, false, false] },
+        // Row 4
+        { available: false, position: [-0.224, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.056], walls: [false, false, false, false] },
+        // Row 5
+        { available: false, position: [-0.224, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0], walls: [false, false, false, false] },
+        // Row 6
+        { available: false, position: [-0.224, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.056], walls: [false, false, false, false] },
+        // Row 7
+        { available: false, position: [-0.224, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.112], walls: [false, false, false, false] },
+        // Row 8
+        { available: false, position: [-0.224, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.168], walls: [false, false, false, false] },
+        // Row 9
+        { available: false, position: [-0.224, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.168, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.112, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.056, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [0, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.056, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.112, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.168, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.224], walls: [false, false, false, false] },
+    ];
+    const initialLinesInfo = [
+        // Vertical col 1
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.252, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.252, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 2
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.196, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 3
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.14, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 4
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.084, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 5
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [-0.028, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 6
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.028, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 7
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.084, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 8
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.14, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 9
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.196, 0, 0.2085],
+            isEdge: true,
+        },
+        // Vertical col 10
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, -0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, -0.2085],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, -0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, -0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, -0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, 0.028],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, 0.084],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, 0.14],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.252, 0, 0.196],
+            rotation: [0, 0, 0],
+            hoverPosition: [0.252, 0, 0.2085],
+            isEdge: true,
+        },
+        // Horizontal row 1
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, -0.196],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, -0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, -0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, -0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, -0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, -0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, -0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, -0.196],
+            isEdge: true,
+        },
+        // Horizontal row 2
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, -0.14],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, -0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, -0.14],
+            isEdge: true,
+        },
+        // Horizontal row 3
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, -0.084],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, -0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, -0.084],
+            isEdge: true,
+        },
+        // Horizontal row 4
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, -0.028],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, -0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, -0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, -0.028],
+            isEdge: true,
+        },
+        // Horizontal row 5
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, 0.028],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, 0.028],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.028],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, 0.028],
+            isEdge: true,
+        },
+        // Horizontal row 6
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, 0.084],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, 0.084],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.084],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, 0.084],
+            isEdge: true,
+        },
+        // Horizontal row 7
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, 0.14],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, 0.14],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.14],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, 0.14],
+            isEdge: true,
+        },
+        // Horizontal row 8
+        {
+            char: "V",
+            available: true,
+            position: [-0.196, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.2085, 0, 0.196],
+            isEdge: true,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.14, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.14, 0, 0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.084, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.084, 0, 0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [-0.028, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [-0.028, 0, 0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.028, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.028, 0, 0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.084, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.084, 0, 0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.14, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.14, 0, 0.196],
+            isEdge: false,
+        },
+        {
+            char: "V",
+            available: true,
+            position: [0.196, 0, 0.196],
+            rotation: [0, Math.PI / 2, 0],
+            hoverPosition: [0.2085, 0, 0.196],
+            isEdge: true,
+        },
+    ];
+    const initialWallsInfo = [
+        {
+            placed: false,
+            geometry: nodes.wall_1.geometry,
+            material: materials.Wall,
+            position: [-0.252, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_2.geometry,
+            material: materials.Wall,
+            position: [-0.196, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_3.geometry,
+            material: materials.Wall,
+            position: [-0.14, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_4.geometry,
+            material: materials.Wall,
+            position: [-0.084, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_5.geometry,
+            material: materials.Wall,
+            position: [-0.028, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_6.geometry,
+            material: materials.Wall,
+            position: [0.028, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_7.geometry,
+            material: materials.Wall,
+            position: [0.084, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_8.geometry,
+            material: materials.Wall,
+            position: [0.14, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_9.geometry,
+            material: materials.Wall,
+            position: [0.196, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_10.geometry,
+            material: materials.Wall,
+            position: [0.252, 0, -0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 2,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_11.geometry,
+            material: materials.Wall,
+            position: [-0.252, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_12.geometry,
+            material: materials.Wall,
+            position: [-0.196, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_13.geometry,
+            material: materials.Wall,
+            position: [-0.14, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_14.geometry,
+            material: materials.Wall,
+            position: [-0.084, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_15.geometry,
+            material: materials.Wall,
+            position: [-0.028, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_16.geometry,
+            material: materials.Wall,
+            position: [0.028, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_17.geometry,
+            material: materials.Wall,
+            position: [0.084, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_18.geometry,
+            material: materials.Wall,
+            position: [0.14, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_19.geometry,
+            material: materials.Wall,
+            position: [0.196, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+        {
+            placed: false,
+            geometry: nodes.wall_20.geometry,
+            material: materials.Wall,
+            position: [0.252, 0, 0.308],
+            scale: [0.006, 0.053, 0.106],
+            rotation: [0, 0, 0],
+            player: 1,
+        },
+    ];
 
     // Game states
     const [isHelperVisible, setHelperVisible] = useState(false);
-    const [step, setStep] = useState(0);
+    // step: 0 -> Menu
+    // step: 1 -> Pick piece/wall
+    // step: 2 -> Place piece/wall
+    const [step, setStep] = useState(1);
+    // pieceOrWall: 0 -> Null
+    // pieceOrWall: 1 -> Moving piece
+    // pieceOrWall: 2 -> Moving wall
+    const [pieceOrWall, setPieceOrWall] = useState(0);
+    const [indexSelected, setIndexSelected] = useState(-1);
     const [playerTurn, setPlayerTurn] = useState(1);
-
+    const [piecesInfo, setPiecesInfo] = useState(initialPiecesInfo);
+    const [gridsInfo, setGridsInfo] = useState(initialGridsInfo);
+    const [linesInfo, setLinesInfo] = useState(initialLinesInfo);
+    const [wallsInfo, setWallsInfo] = useState(initialWallsInfo);
 
     // Helpter functions
     useEffect(() => {
@@ -76,6 +1557,60 @@ const Quoridor = (props) => {
     function startGame() { 
         setStep(1);
         setHelperVisible(true);
+    }
+    function handlePieceClick() {
+        setStep(2);
+        setPieceOrWall(1);
+        // TODO UPDATE gridsInfo.available based on current piece location
+    }
+    function handleWallClick(wallIndex) {
+        setIndexSelected(wallIndex);
+        setStep(2);
+        setPieceOrWall(2);
+    }
+    function handleGridClick(gridIndex) {
+        // TODO UPDATE piecesInfo.grid based on index
+        // TODO UPDATE piecesInfo.position based on index
+        setStep(1);
+        setPieceOrWall(0);
+        setPlayerTurn((prev) => (prev === 1? 2 : 1));
+    }
+    function handleLineClick(lineIndex) {
+        const lineInfo = linesInfo[lineIndex];
+
+        // Update walls info on placed wall
+        wallsInfo[indexSelected].placed = true;
+        wallsInfo[indexSelected].position = lineInfo.position;
+        wallsInfo[indexSelected].rotation = lineInfo.rotation;
+
+        // Update lines info to remove lines that are no longer available
+        var col = -1;
+        var row = -1;
+        linesInfo[lineIndex].available = false;
+        if (lineIndex <= 10*8-1) {
+            // Wall is placed vertically
+            col = Math.floor(lineIndex/8); // 0-9
+            row = lineIndex % 8; // 0-7
+            // Set adjacents area to not available
+            if (row !== 0) linesInfo[lineIndex-1].available = false;
+            if (row !== 7) linesInfo[lineIndex+1].available = false;
+            if (col !== 0 && col !== 9) linesInfo[80+col-1+(row*8)].available = false;
+        } else {
+            // Wall is placed horizontally
+            col = (lineIndex-80) % 8; // 0-7
+            row = Math.floor((lineIndex-80)/8); // 0-7
+            // Set adjacents area to not available
+            if (col !== 0) linesInfo[lineIndex-1].available = false;
+            if (col !== 7) linesInfo[lineIndex+1].available = false;
+            linesInfo[row+(col+1)*8].available = false;
+        }
+
+
+        // TODO UPDATE gridsInfo.walls
+        setIndexSelected(-1);
+        setStep(1);
+        setPieceOrWall(0);
+        setPlayerTurn((prev) => (prev === 1? 2 : 1));
     }
 
     return (
@@ -113,7 +1648,7 @@ const Quoridor = (props) => {
                             {
                                 step !== 0 &&
                                 <Notification text={(
-                                    step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : ("")
+                                    step === 1 ? (`Player ${playerTurn}'s turn: Pick.`) : (`Player ${playerTurn}'s turn: Place.`)
                                 )}/>
                             }
                         </div>
@@ -137,11 +1672,29 @@ const Quoridor = (props) => {
                                 castShadow
                                 receiveShadow
                                 geometry={nodes.Board.geometry}
-                                material={materials.Wood_procedural_table}
+                                material={materials.Table}
                             />
-                            <Wall nodes={nodes} materials={materials} />
-                            <Player nodes={nodes} materials={materials} />
-                            <Grid nodes={nodes} materials={materials} />
+                            <group position={[0, 0.045, 0]}>
+                                {piecesInfo.map((data, i) => {
+                                    return <Piece {...data} handleClick={handlePieceClick} step={step} isSelected={pieceOrWall === 1 && i+1 === playerTurn} canSelect={i+1 === playerTurn} />
+                                })}
+                            </group>
+                            <group position={[0, 0.046, 0]}>
+                                {wallsInfo.map((data, i) => {
+                                    return <Wall {...data} index={i} handleClick={handleWallClick} step={step} indexSelected={indexSelected} canSelect={data.player === playerTurn && !data.placed} />
+                                })}
+                            </group>
+                            <group position={[0, 0.0201, 0]}>
+                                {gridsInfo.map((data, i) => {
+                                    return <Grid position={data.position} materials={materials} index={i} handleClick={handleGridClick} step={step} canSelect={pieceOrWall === 1 && data.available} />
+                                })}
+                            </group>
+                            <group position={[0, 0.0200, 0]}>
+                                {linesInfo.map((data, i) => {
+                                    return <Line {...data} nodes={nodes} materials={materials} index={i} handleClick={handleLineClick} step={step} canSelect={pieceOrWall === 2 && data.available} />
+                                })}
+                            </group>
+                            <Static nodes={nodes} materials={materials} />
                         </a.group>
                         <Environment preset={palettes[selectedPalette].preset} background blur={1} />
                     </Suspense>
