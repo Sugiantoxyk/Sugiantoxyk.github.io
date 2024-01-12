@@ -380,16 +380,16 @@ export const schoolProjects = [
 
 export const personalProjects = [
   {
+    url: "/project/quoridor.png",
+    alt: "quoridor",
+    title: "Quoridor",
+    href: "/quoridor",
+  },
+  {
     url: "/project/quarto.png",
     alt: "quarto",
     title: "Quarto",
     href: "/quarto",
-  },
-  {
-    url: "/project/grid.jpeg",
-    alt: "comingsoon",
-    title: "Coming Soon",
-    href: null,
   },
   {
     url: "/project/grid.jpeg",

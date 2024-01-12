@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useCursor } from '@react-three/drei';
 import * as THREE from 'three';
 
-const Line = ({position, rotation, hoverPosition, isEdge, nodes, materials, index, handleClick, step, canSelect}) => {
+const Line = ({position, rotation, hoverPosition, isEdge, nodes, materials, index, handleClick, handleHover, canSelect}) => {
     const hoverLineEdge = new THREE.BoxGeometry(0.006, 0, 0.081); 
     const hoverLine = new THREE.BoxGeometry(0.006, 0, 0.056);
 
@@ -29,15 +29,16 @@ const Line = ({position, rotation, hoverPosition, isEdge, nodes, materials, inde
                 position={hoverPosition}
                 rotation={rotation}
                 onPointerEnter={(e) => {
-                    if(step === 2 && canSelect) {
+                    if(canSelect && handleHover(index)) {
                         e.stopPropagation();
                         setHover(true);
                     }
                 }}
                 onPointerLeave={() => setHover(false)}
                 onClick={(e) => {
-                    if(step === 2 && canSelect){
+                    if(canSelect && handleHover(index)){
                         e.stopPropagation();
+                        setHover(false);
                         handleClick(index);
                     }
                 }}

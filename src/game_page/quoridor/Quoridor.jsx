@@ -6,7 +6,7 @@ import { Canvas } from "@react-three/fiber";
 import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from 'three';
 
-import quoridorScene from './scene.glb';
+import quoridorScene from './quoridor.glb';
 import Piece from "./Piece";
 import Grid from "./Grid";
 import Static from "./Static";
@@ -74,17 +74,17 @@ const Quoridor = (props) => {
     ];
     const initialGridsInfo = [ // walls: [up, down, left, right]
         // Row 1
-        { available: false, position: [-0.224, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [-0.168, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [-0.112, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [-0.056, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [0, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.056, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.112, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.168, 0, -0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, -0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, -0.224], walls: [true, false, true, false] },
+        { available: false, position: [-0.168, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [-0.112, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [-0.056, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [0, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [0.056, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [0.112, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [0.168, 0, -0.224], walls: [true, false, false, false] },
+        { available: false, position: [0.224, 0, -0.224], walls: [true, false, false, true] },
         // Row 2
-        { available: false, position: [-0.224, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, -0.168], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, -0.168], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, -0.168], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, -0.168], walls: [false, false, false, false] },
@@ -92,9 +92,9 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, -0.168], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, -0.168], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, -0.168], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, -0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.168], walls: [false, false, false, true] },
         // Row 3
-        { available: false, position: [-0.224, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, -0.112], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, -0.112], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, -0.112], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, -0.112], walls: [false, false, false, false] },
@@ -102,9 +102,9 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, -0.112], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, -0.112], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, -0.112], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, -0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.112], walls: [false, false, false, true] },
         // Row 4
-        { available: false, position: [-0.224, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, -0.056], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, -0.056], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, -0.056], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, -0.056], walls: [false, false, false, false] },
@@ -112,9 +112,9 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, -0.056], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, -0.056], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, -0.056], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, -0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, -0.056], walls: [false, false, false, true] },
         // Row 5
-        { available: false, position: [-0.224, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, 0], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, 0], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, 0], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, 0], walls: [false, false, false, false] },
@@ -122,9 +122,9 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, 0], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, 0], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, 0], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, 0], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0], walls: [false, false, false, true] },
         // Row 6
-        { available: false, position: [-0.224, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, 0.056], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, 0.056], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, 0.056], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, 0.056], walls: [false, false, false, false] },
@@ -132,9 +132,9 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, 0.056], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, 0.056], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, 0.056], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, 0.056], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.056], walls: [false, false, false, true] },
         // Row 7
-        { available: false, position: [-0.224, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, 0.112], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, 0.112], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, 0.112], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, 0.112], walls: [false, false, false, false] },
@@ -142,9 +142,9 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, 0.112], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, 0.112], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, 0.112], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, 0.112], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.112], walls: [false, false, false, true] },
         // Row 8
-        { available: false, position: [-0.224, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, 0.168], walls: [false, false, true, false] },
         { available: false, position: [-0.168, 0, 0.168], walls: [false, false, false, false] },
         { available: false, position: [-0.112, 0, 0.168], walls: [false, false, false, false] },
         { available: false, position: [-0.056, 0, 0.168], walls: [false, false, false, false] },
@@ -152,17 +152,17 @@ const Quoridor = (props) => {
         { available: false, position: [0.056, 0, 0.168], walls: [false, false, false, false] },
         { available: false, position: [0.112, 0, 0.168], walls: [false, false, false, false] },
         { available: false, position: [0.168, 0, 0.168], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, 0.168], walls: [false, false, false, false] },
+        { available: false, position: [0.224, 0, 0.168], walls: [false, false, false, true] },
         // Row 9
-        { available: false, position: [-0.224, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [-0.168, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [-0.112, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [-0.056, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [0, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.056, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.112, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.168, 0, 0.224], walls: [false, false, false, false] },
-        { available: false, position: [0.224, 0, 0.224], walls: [false, false, false, false] },
+        { available: false, position: [-0.224, 0, 0.224], walls: [false, true, true, false] },
+        { available: false, position: [-0.168, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [-0.112, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [-0.056, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [0, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [0.056, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [0.112, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [0.168, 0, 0.224], walls: [false, true, false, false] },
+        { available: false, position: [0.224, 0, 0.224], walls: [false, true, false, true] },
     ];
     const initialLinesInfo = [
         // Vertical col 1
@@ -336,20 +336,19 @@ const Quoridor = (props) => {
     // Game states
     const [isHelperVisible, setHelperVisible] = useState(false);
     // step: 0 -> Menu
-    // step: 1 -> Pick piece/wall
-    // step: 2 -> Place piece/wall
-    // step: 3 -> Current player won
-    const [step, setStep] = useState(1);
+    // step: 1 -> Pick/place piece/wall
+    // step: 2 -> Current player won
+    const [step, setStep] = useState(0);
     // pieceOrWall: 0 -> Null
     // pieceOrWall: 1 -> Moving piece
     // pieceOrWall: 2 -> Moving wall
     const [pieceOrWall, setPieceOrWall] = useState(0);
     const [indexSelected, setIndexSelected] = useState(-1);
     const [playerTurn, setPlayerTurn] = useState(1);
-    const [piecesInfo, setPiecesInfo] = useState(initialPiecesInfo);
-    const [gridsInfo, setGridsInfo] = useState(initialGridsInfo);
-    const [linesInfo, setLinesInfo] = useState(initialLinesInfo);
-    const [wallsInfo, setWallsInfo] = useState(initialWallsInfo);
+    const [piecesInfo] = useState(initialPiecesInfo);
+    const [gridsInfo] = useState(initialGridsInfo);
+    const [linesInfo] = useState(initialLinesInfo);
+    const [wallsInfo] = useState(initialWallsInfo);
 
     // Helpter functions
     useEffect(() => {
@@ -375,10 +374,10 @@ const Quoridor = (props) => {
     function checkWin() {
         const curPlayerGrid = piecesInfo[playerTurn-1].grid;
         if (playerTurn === 1 && curPlayerGrid >= 0 && curPlayerGrid <= 8) {
-            setStep(3);
+            setStep(2);
             return true;
         } else if (playerTurn === 2 && curPlayerGrid >= 72 && curPlayerGrid <= 80) {
-            setStep(3);
+            setStep(2);
             return true;
         }
         return false;
@@ -386,15 +385,7 @@ const Quoridor = (props) => {
     function checkCanMove(gridIndex, dir) {
         // Functions checks for out of bound and walls on the gridIndex in dir direction
         const direction = [-9, 9, -1, 1];
-        if (dir === 0) {
-            if (!gridsInfo[gridIndex].walls[0] && gridIndex+direction[0] >= 0) return gridIndex+direction[0];
-        } else if (dir === 1) {
-            if (!gridsInfo[gridIndex].walls[1] && gridIndex+direction[1] <= 80) return gridIndex+direction[1];
-        } else if (dir === 2) {
-            if (!gridsInfo[gridIndex].walls[2] && gridIndex%9 !== 0) return gridIndex+direction[2];
-        } else {
-            if (!gridsInfo[gridIndex].walls[3] && gridIndex%9 !== 8) return gridIndex+direction[3];
-        }
+        if (!gridsInfo[gridIndex].walls[dir]) return gridIndex+direction[dir];
         return -1;
     }
     function checkForHop(gridIndex, dir) {
@@ -424,7 +415,6 @@ const Quoridor = (props) => {
         }
     }
     function handlePieceClick() {
-        setStep(2);
         setPieceOrWall(1);
 
         // Updating gridsInfo.available based on currect piece locaiton
@@ -439,10 +429,12 @@ const Quoridor = (props) => {
         if (moveRight !== -1){ checkForHop(moveRight, 3); }
     }
     function handleWallClick(wallIndex) {
+        // Update game states
         setIndexSelected(wallIndex);
-        setStep(2);
         setPieceOrWall(2);
-        // TODO UPDATE linesInfo.available based on the available route to win
+    }
+    function resetGridAvailable() {
+        gridsInfo.forEach((data) => { data.available = false; });
     }
     function handleGridClick(gridIndex) {        
         // Update pieces current position
@@ -450,13 +442,26 @@ const Quoridor = (props) => {
         piecesInfo[playerTurn-1].position = gridsInfo[gridIndex].position;
 
         // Reset grids availability
-        gridsInfo.forEach((data) => { data.available = false; });
+        resetGridAvailable();
 
+        // Update game states
+        setPieceOrWall(0);
         if (!checkWin()) {
-            // Update game states
-            setStep(1);
-            setPieceOrWall(0);
             setPlayerTurn((prev) => (prev === 1? 2 : 1));
+        }
+    }
+    function updateGridsInfoWall(gridsInfo, isVertical, col, row) {
+        // Update grids info for all the walls location around each grid
+        if (isVertical) {
+            gridsInfo[row*9+col].walls[3] = true;
+            gridsInfo[(row+1)*9+col].walls[3] = true;
+            gridsInfo[row*9+col+1].walls[2] = true;
+            gridsInfo[(row+1)*9+col+1].walls[2] = true;
+        } else {
+            gridsInfo[row*9+col].walls[1] = true;
+            gridsInfo[row*9+col+1].walls[1] = true;
+            gridsInfo[(row+1)*9+col].walls[0] = true;
+            gridsInfo[(row+1)*9+col+1].walls[0] = true;
         }
     }
     function handleLineClick(lineIndex) {
@@ -492,23 +497,68 @@ const Quoridor = (props) => {
         }
 
         // Update grids info for all the walls location around each grid
-        if (isVertical) {
-            gridsInfo[row*9+col].walls[3] = true;
-            gridsInfo[(row+1)*9+col].walls[3] = true;
-            gridsInfo[row*9+col+1].walls[2] = true;
-            gridsInfo[(row+1)*9+col+1].walls[2] = true;
-        } else {
-            gridsInfo[row*9+col].walls[1] = true;
-            gridsInfo[row*9+col+1].walls[1] = true;
-            gridsInfo[(row+1)*9+col].walls[0] = true;
-            gridsInfo[(row+1)*9+col+1].walls[0] = true;
-        }
+        updateGridsInfoWall(gridsInfo, isVertical, col, row);
+
+        // Reset grids availability
+        resetGridAvailable();
 
         // Update game states
         setIndexSelected(-1);
-        setStep(1);
         setPieceOrWall(0);
         setPlayerTurn((prev) => (prev === 1? 2 : 1));
+    } 
+    function search(gridsInfo, direction, start, goalStart, goalEnd) {
+        var curIndex = start;
+        var seq = [curIndex];
+        var visited = [];
+        visited.length = gridsInfo.length;
+        visited.fill(0);
+        while (seq.length !== 0) {
+            // Getting the last element in the array
+            curIndex = seq.pop();
+            // Terminating condition
+            if (curIndex >= goalStart && curIndex <= goalEnd) return true;
+            // Set grid index as visited to prevent further visit to the index
+            visited[curIndex] = 1;
+            for (let i = 0; i < direction.length; i++) {
+                // For all the 4 movement (up, down, left, right), check if theres a wall and if next grid is visited
+                if (!gridsInfo[curIndex].walls[i] && visited[curIndex+direction[i]] === 0) seq.push(curIndex+direction[i]);
+            }
+        }
+        return false;
+    }
+    function checkCanReachGoal(gridsInfo) {
+        // Sequence of directions [up, down, left, right]
+        const dir = [-9, 9, -1, 1];
+
+        // Running simple search on both player's pieces if they can reach the goal
+        if (search(gridsInfo, dir, piecesInfo[0].grid, 0, 8) && 
+            search(gridsInfo, dir, piecesInfo[1].grid, 72, 80)) return true;
+        else return false;
+    }
+    function handleLineHoverCheck(lineIndex) {
+        // Gets a copy of gridsInfo
+        const copiedGridsInfo = JSON.parse(JSON.stringify(gridsInfo));
+        
+        // Get row and col so we I can update the walls states in gridsInfo later on
+        var col = -1;
+        var row = -1;
+        var isVertical = true;
+        if (lineIndex <= 8*8-1) {
+            // Wall is placed vertically
+            col = Math.floor(lineIndex/8); // 0-7
+            row = lineIndex % 8; // 0-7
+        } else {
+            // Wall is placed horizontally
+            isVertical = false;
+            col = (lineIndex-64) % 8; // 0-7
+            row = Math.floor((lineIndex-64)/8); // 0-7
+        }
+        // Update gridsInfo walls states
+        updateGridsInfoWall(copiedGridsInfo, isVertical, col, row);
+
+        // Run algorithm to check if piece can travel to a goal
+        return checkCanReachGoal(copiedGridsInfo);
     }
 
     return (
@@ -546,8 +596,7 @@ const Quoridor = (props) => {
                             {
                                 step !== 0 &&
                                 <Notification text={(
-                                    step === 1 ? (`Player ${playerTurn}'s turn: Pick.`) : 
-                                    step === 2 ? (`Player ${playerTurn}'s turn: Place.`) : (`Player ${playerTurn} win!`)
+                                    step === 1 ? (`Player ${playerTurn}'s turn.`) : (`Player ${playerTurn} win!`)
                                 )}/>
                             }
                         </div>
@@ -575,22 +624,22 @@ const Quoridor = (props) => {
                             />
                             <group position={[0, 0.045, 0]}>
                                 {piecesInfo.map((data, i) => {
-                                    return <Piece {...data} handleClick={handlePieceClick} step={step} isSelected={pieceOrWall === 1 && i+1 === playerTurn} canSelect={i+1 === playerTurn} />
+                                    return <Piece {...data} handleClick={handlePieceClick} isSelected={pieceOrWall === 1 && i+1 === playerTurn} canSelect={step !== 2 && i+1 === playerTurn} />
                                 })}
                             </group>
                             <group position={[0, 0.046, 0]}>
                                 {wallsInfo.map((data, i) => {
-                                    return <Wall {...data} index={i} handleClick={handleWallClick} step={step} indexSelected={indexSelected} canSelect={data.player === playerTurn && !data.placed} />
+                                    return <Wall {...data} index={i} handleClick={handleWallClick} indexSelected={indexSelected} canSelect={step !== 2 && data.player === playerTurn && !data.placed} />
                                 })}
                             </group>
                             <group position={[0, 0.0201, 0]}>
                                 {gridsInfo.map((data, i) => {
-                                    return <Grid position={data.position} materials={materials} index={i} handleClick={handleGridClick} step={step} canSelect={pieceOrWall === 1 && data.available} />
+                                    return <Grid position={data.position} nodes={nodes} materials={materials} index={i} handleClick={handleGridClick} canSelect={pieceOrWall === 1 && data.available} playerTurn={playerTurn} />
                                 })}
                             </group>
                             <group position={[0, 0.0200, 0]}>
                                 {linesInfo.map((data, i) => {
-                                    return <Line {...data} nodes={nodes} materials={materials} index={i} handleClick={handleLineClick} step={step} canSelect={pieceOrWall === 2 && data.available} />
+                                    return <Line {...data} nodes={nodes} materials={materials} index={i} handleClick={handleLineClick} handleHover={handleLineHoverCheck} canSelect={pieceOrWall === 2 && data.available} />
                                 })}
                             </group>
                             <Static nodes={nodes} materials={materials} />

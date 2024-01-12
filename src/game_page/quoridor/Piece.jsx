@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useCursor } from '@react-three/drei';
 
-const Piece = ({geometry, material, position, rotation, scale, handleClick, step, isSelected, canSelect}) => {
+const Piece = ({geometry, material, position, rotation, scale, handleClick, isSelected, canSelect}) => {
     const [isHover, setHover] = useState(false);
     useCursor(isHover);
     const hoverPosition = Array.from(position);
@@ -16,14 +16,14 @@ const Piece = ({geometry, material, position, rotation, scale, handleClick, step
             rotation={rotation}
             scale={scale}
             onPointerEnter={(e) => {
-                if(step === 1 && canSelect) {
+                if(canSelect) {
                     e.stopPropagation();
                     setHover(true);
                 }
             }}
             onPointerLeave={() => setHover(false)}
             onClick={(e) => {
-                if(step === 1 && canSelect) {
+                if(canSelect) {
                     e.stopPropagation();
                     handleClick();
                 }

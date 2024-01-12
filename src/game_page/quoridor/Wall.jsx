@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useCursor } from '@react-three/drei';
 
-const Wall = ({geometry, material, position, scale, rotation, index, handleClick, step, indexSelected, canSelect}) => {
+const Wall = ({geometry, material, position, scale, rotation, index, handleClick, indexSelected, canSelect}) => {
     const [isHover, setHover] = useState(false);
     useCursor(isHover);
     const hoverPosition = Array.from(position);
@@ -18,14 +18,14 @@ const Wall = ({geometry, material, position, scale, rotation, index, handleClick
             scale={scale}
             rotation={rotation}
             onPointerEnter={(e) => {
-                if(step === 1 && canSelect) {
+                if(canSelect) {
                     e.stopPropagation();
                     setHover(true);
                 }
             }}
             onPointerLeave={() => setHover(false)}
             onClick={(e) => {
-                if(step === 1 && canSelect) {
+                if(canSelect) {
                     e.stopPropagation();
                     handleClick(index);
                 }
