@@ -13,7 +13,7 @@ const PersonalProject = () => {
     const { scrollYProgress } = useScroll({
         target: targetRef,
     });
-    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
+    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
 
     return (
         <section className={`${styles.paddings} relative select-none h-[300vh]`} ref={targetRef}>
