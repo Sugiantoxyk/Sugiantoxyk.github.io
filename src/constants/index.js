@@ -31,6 +31,10 @@ export const gameMenuItems = [
     ref: "/",
   },
   {
+    title: "Quoridor",
+    ref: "/quoridor",
+  },
+  {
     title: "Quarto",
     ref: "/quarto",
   },
