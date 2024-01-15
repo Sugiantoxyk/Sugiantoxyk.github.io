@@ -5,6 +5,7 @@ import { a } from '@react-spring/three';
 import { Canvas } from "@react-three/fiber";
 import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from 'three';
+import Confetti from "react-confetti";
 
 import quartoScene from './quarto.glb';
 import Grid from "./Grid";
@@ -213,11 +214,19 @@ const Quarto = (props) => {
 
     // Game states
     const [isHelperVisible, setHelperVisible] = useState(false);
+    // step: -1 -> AI turn
+    // step: 0 -> main menu
+    // step: 1 -> current player pick a piece
+    // step: 2 -> current player place a piece
+    // step: 3 -> current player win
+    // step: 4 -> draw
     const [step, setStep] = useState(0);
+    const [playWithAI, setPlayWithAI] = useState(false);
     const [playerTurn, setPlayerTurn] = useState(1);
     const [indexSelected, setIndexSelected] = useState(-1);
-    const [gridPositions, setGridPositions] = useState(initialGridPositions);
-    const [piecesInfo, setPiecesInfo] = useState(initialPiecesInfo);
+    const [gridPositions] = useState(initialGridPositions);
+    const [piecesInfo] = useState(initialPiecesInfo);
+    const [winCondition, setWinCondition] = useState(null);
 
     // Helpter functions
     useEffect(() => {
@@ -236,21 +245,27 @@ const Quarto = (props) => {
             window.removeEventListener('touchmove', handleCanvasTouch);
         };
     }, []);
-    function startGame() { 
+    function startGame(key) {
+        if (key === "1p") {
+            setPlayWithAI(true);
+        }
         setStep(1);
         setHelperVisible(true);
     }
-    function checkSame(indexes) {
-        if (indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[0] === gridPositions[indexes[0]].piece[0])) ||
-            indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[1] === gridPositions[indexes[0]].piece[1])) ||
-            indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[2] === gridPositions[indexes[0]].piece[2])) ||
-            indexes.every(index => (gridPositions[index].piece !== "" && gridPositions[index].piece[3] === gridPositions[indexes[0]].piece[3]))
-        ) {
-            for (const i of indexes) { gridPositions[i].win = 1; }
-            return true;
+    function checkSame(indexes, gridInfo) {
+        if (indexes.every(index => (gridInfo[index].piece !== "" && gridInfo[index].piece[0] === gridInfo[indexes[0]].piece[0]))) {
+            if (gridInfo[indexes[0]].piece[0] === "L") setWinCondition("light"); else setWinCondition("dark");
+        } else if (indexes.every(index => (gridInfo[index].piece !== "" && gridInfo[index].piece[1] === gridInfo[indexes[0]].piece[1]))) {
+            if (gridInfo[indexes[0]].piece[1] === "S") setWinCondition("square"); else setWinCondition("round");
+        } else if (indexes.every(index => (gridInfo[index].piece !== "" && gridInfo[index].piece[2] === gridInfo[indexes[0]].piece[2]))) {
+            if (gridInfo[indexes[0]].piece[2] === "S") setWinCondition("short"); else setWinCondition("tall");
+        } else if (indexes.every(index => (gridInfo[index].piece !== "" && gridInfo[index].piece[3] === gridInfo[indexes[0]].piece[3]))) {
+            if (gridInfo[indexes[0]].piece[2] === "H") setWinCondition("hollow"); else setWinCondition("solid");
         } else return false;
+        for (const i of indexes) { gridInfo[i].win = 1; }
+        return true;
     }
-    function checkWin() {
+    function checkWin(gridInfo = gridPositions) {
         var indexes = [];
         // Check if a player win or draw
         for (const i of [0,4,8,12]) {
@@ -258,56 +273,112 @@ const Quarto = (props) => {
             for (let j=0; j<4; j++) {
                 indexes.push(i+j);
             }
-            if (checkSame(indexes)) return 1;
+            if (checkSame(indexes, gridInfo)) return 1;
         }
         for (let i=0; i<4; i++) {
             indexes = [];
             for (const j of [0,4,8,12]) {
                 indexes.push(i+j);
             }
-            if (checkSame(indexes)) return 1;
+            if (checkSame(indexes, gridInfo)) return 1;
         }
         indexes = [];
         for (let i=0; i<16; i+=5) {
             indexes.push(i);
         }
-        if (checkSame(indexes)) return 1;
+        if (checkSame(indexes, gridInfo)) return 1;
         indexes = [];
         for (let i=3; i<13; i+=3) {
             indexes.push(i);
         }
-        if (checkSame(indexes)) return 1;
+        if (checkSame(indexes, gridInfo)) return 1;
 
+        // Checking for draw
         if (gridPositions.every(val => val.piece !== "")) return 2;
         return 0;
     }
-    function handlePieceClick(index) {
+    function AIAlgo(index) {
+        setStep(-1);
+        // AI picking location to place piece
+        var availIndex = [];
+        var copiedGridPositions = null;
+        // Iterate all grid to find placeable grid
+        for (var gridIndex = 0; gridIndex < gridPositions.length; gridIndex++) {
+            if (gridPositions[gridIndex].piece === "") {
+                availIndex.push(gridIndex);
+                copiedGridPositions = JSON.parse(JSON.stringify(gridPositions));
+                copiedGridPositions[gridIndex].piece = piecesInfo[index].char;
+                // Break the loop if found a grid that wins, AI will choose this grid
+                if (checkWin(copiedGridPositions) === 1) {
+                    availIndex = [gridIndex];
+                    break;
+                }
+            }
+        }
+        var chosenIndex = Math.floor(Math.random() * availIndex.length);
+        if (handleGridClick(availIndex[chosenIndex], true, index)) return;
+
+        // AI picking piece
+        availIndex = [];
+        var canWin = false;
+        // Iterate all pieces to find placeable piece
+        for (var pieceIndex = 0; pieceIndex < piecesInfo.length; pieceIndex++) {
+            if (piecesInfo[pieceIndex].grid === -1) {
+                availIndex.push(pieceIndex);
+                canWin = false;
+                copiedGridPositions = JSON.parse(JSON.stringify(gridPositions));
+                // Check if this piece can win in the next turn
+                for (gridIndex = 0; gridIndex < copiedGridPositions.length; gridIndex++) {
+                    if (copiedGridPositions[gridIndex].piece === "") {
+                        copiedGridPositions[gridIndex].piece = piecesInfo[pieceIndex].char;
+                        // If the piece can win, we move on to check the next piece
+                        if (checkWin(copiedGridPositions) === 1) {
+                            canWin = true;
+                            break;
+                        }
+                        copiedGridPositions[gridIndex].piece = "";
+                    }
+                }
+                // We found a piece that will not win in the next turn, AI will choose this option
+                if (!canWin) {
+                    availIndex = [pieceIndex];
+                    break;
+                }
+            }
+        }
+        chosenIndex = Math.floor(Math.random() * availIndex.length);
+        handlePieceClick(availIndex[chosenIndex], true);
+    }
+    function handlePieceClick(index, fromAI = false) {
         // Update states of the game
         setIndexSelected(index);
-        setStep(2);
         setPlayerTurn((prev) => (prev === 1? 2 : 1));
+        setStep(2);
+        if (playWithAI && !fromAI) AIAlgo(index);
     }
-    function handleGridClick(index) {
+    function handleGridClick(index, fromAI = false, selectedIndex = indexSelected) {
         // Update piece new position on the board
         var newPosition = gridPositions[index].position;
         newPosition[1] = 0.045;
-        const newPiecesInfo = [...piecesInfo];
-        newPiecesInfo[indexSelected].position = newPosition;
-        newPiecesInfo[indexSelected].grid = index;
-        setPiecesInfo(newPiecesInfo);
+        piecesInfo[selectedIndex].position = newPosition;
+        piecesInfo[selectedIndex].grid = index;
         // Update grid is occupied
-        const newGridPositions = [...gridPositions];
-        newGridPositions[index].piece = piecesInfo[indexSelected].char;
-        setGridPositions(newGridPositions);
+        gridPositions[index].piece = piecesInfo[selectedIndex].char;
         // Update states of the game
         setIndexSelected(-1);
-        setStep(1);
+        if (!fromAI) {
+            setStep(1);
+        }
+        // Check for win
         var flag = checkWin();
         if (flag === 1){
             setStep(3);
+            return true;
         } else if (flag === 2){
             setStep(4);
+            return true;
         };
+        return false;
     }
     function getChar() {
         // Helper function to return the characteristics of the piece selected
@@ -327,6 +398,10 @@ const Quarto = (props) => {
                 {/* Game's menu */}
                 {
                     step === 0 && <GameMenu data={gameMenu["quarto"]} startGame={startGame}/>
+                }
+                {/* Confetti */}
+                {
+                    step === 3 && <Confetti recycle={true} />
                 }
                 {/* Helper image */}
                 {
@@ -355,9 +430,11 @@ const Quarto = (props) => {
                             {
                                 step !== 0 &&
                                 <Notification text={(
-                                    step === 1 ? (`Player ${playerTurn}'s turn: Pick a piece for your opponent to play.`) : 
-                                    step === 2 ? (`Player ${playerTurn}'s turn: Place the ${getChar()} piece.`) : 
-                                    step === 3 ? (`Player ${playerTurn} win!`) : (`Draw!`)
+                                    step === -1 ? (`AI making a choice.`) : 
+                                    step === 1 ? (`${playWithAI ? ("Your turn") : (`Player ${playerTurn}'s turn`)}: Pick a piece for your opponent to play.`) : 
+                                    step === 2 ? (`${playWithAI ? ("Your turn") : (`Player ${playerTurn}'s turn`)}: Place the ${getChar()} piece.`) : 
+                                    step === 3 ? (`${playWithAI ? (`${playerTurn === 1 ? ("You win") : ("AI win")}`) : (`Player ${playerTurn} win`)} with a row of ${winCondition} pieces!`) : 
+                                    (`Draw!`)
                                 )}/>
                             }
                         </div>

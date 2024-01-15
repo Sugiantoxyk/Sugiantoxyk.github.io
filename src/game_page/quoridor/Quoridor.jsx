@@ -5,6 +5,7 @@ import { a } from '@react-spring/three';
 import { Canvas } from "@react-three/fiber";
 import { AnimatePresence, motion } from "framer-motion";
 import * as THREE from 'three';
+import Confetti from "react-confetti";
 
 import quoridorScene from './quoridor.glb';
 import Piece from "./Piece";
@@ -367,7 +368,7 @@ const Quoridor = (props) => {
             window.removeEventListener('touchmove', handleCanvasTouch);
         };
     }, []);
-    function startGame() { 
+    function startGame(key) {
         setStep(1);
         setHelperVisible(true);
     }
@@ -568,6 +569,10 @@ const Quoridor = (props) => {
                 {/* Game's menu */}
                 {
                     step === 0 && <GameMenu data={gameMenu["quoridor"]} startGame={startGame}/>
+                }
+                {/* Confetti */}
+                {
+                    step === 2 && <Confetti recycle={true} />
                 }
                 {/* Helper image */}
                 {

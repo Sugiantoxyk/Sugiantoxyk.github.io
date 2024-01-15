@@ -34,6 +34,7 @@ const Piece = ({grid, geometry, material, position, rotation, scale, step, index
                 if(step === 1 && grid === -1) {
                     e.stopPropagation();
                     handleClick(index);
+                    setHover(false);
                 }
             }}
         />
