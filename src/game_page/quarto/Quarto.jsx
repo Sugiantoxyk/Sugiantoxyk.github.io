@@ -44,7 +44,9 @@ const Quarto = (props) => {
     materials.Wood_procedural_Table.color = palettes[selectedPalette].colors[0];
     materials.Smooth_Gold.color = palettes[selectedPalette].colors[1];
     materials.Wood_procedural.color = palettes[selectedPalette].colors[2];
+    materials.Translucent_wood_procedural.color = palettes[selectedPalette].colors[2];
     materials.Wood_procedural_lighter.color = palettes[selectedPalette].colors[3];
+    materials.Translucent_wood_procedural_lighter.color = palettes[selectedPalette].colors[3];
     
     // Game pieces and grids information
     const initialGridPositions = [
@@ -143,7 +145,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_24.geometry,
             material: materials.Wood_procedural,
-            position: [-0.509, 0.046, 0.071],
+            position: [-0.509, 0.045, 0.071],
             rotation: [-Math.PI, 0, 0],
             scale: [-0.028, 0.028, 0.028],
         }, 
@@ -152,7 +154,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_20.geometry,
             material: materials.Wood_procedural_lighter,
-            position: [-0.509, 0.046, 0.211],
+            position: [-0.509, 0.045, 0.211],
             rotation: [-Math.PI, 0, 0],
             scale: [-0.028, 0.028, 0.028],
         },  
@@ -161,7 +163,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_32.geometry,
             material: materials.Wood_procedural_lighter,
-            position: [0.508, 0.046, 0.211],
+            position: [0.508, 0.045, 0.211],
             rotation: [0, 0, 0],
             scale: [0.029, 0.039, 0.029],
         }, 
@@ -170,7 +172,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_34.geometry,
             material: materials.Wood_procedural,
-            position: [0.508, 0.046, 0.071],
+            position: [0.508, 0.045, 0.071],
             rotation: [0, 0, 0],
             scale: [0.029, 0.039, 0.029],
         }, 
@@ -179,7 +181,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_36.geometry,
             material: materials.Wood_procedural_lighter,
-            position: [-0.209, 0.046, 0.511],
+            position: [-0.209, 0.045, 0.511],
             rotation: [0, 0, 0],
             scale: [0.029, 0.029, 0.029],
         },  
@@ -188,7 +190,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_38.geometry,
             material: materials.Wood_procedural,
-            position: [-0.07, 0.046, 0.511],
+            position: [-0.07, 0.045, 0.511],
             rotation: [0, 0, 0],
             scale: [0.029, 0.029, 0.029],
         },  
@@ -197,7 +199,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_40.geometry,
             material: materials.Wood_procedural_lighter,
-            position: [0.068, 0.046, 0.511],
+            position: [0.068, 0.045, 0.511],
             rotation: [0, 0, 0],
             scale: [0.029, 0.029, 0.029],
         }, 
@@ -206,7 +208,7 @@ const Quarto = (props) => {
             grid: -1,
             geometry: nodes.Object_42.geometry,
             material: materials.Wood_procedural,
-            position: [0.208, 0.046, 0.511],
+            position: [0.208, 0.045, 0.511],
             rotation: [0, 0, 0],
             scale: [0.029, 0.029, 0.029],
         }, 
@@ -260,7 +262,7 @@ const Quarto = (props) => {
         } else if (indexes.every(index => (gridInfo[index].piece !== "" && gridInfo[index].piece[2] === gridInfo[indexes[0]].piece[2]))) {
             if (gridInfo[indexes[0]].piece[2] === "S") setWinCondition("short"); else setWinCondition("tall");
         } else if (indexes.every(index => (gridInfo[index].piece !== "" && gridInfo[index].piece[3] === gridInfo[indexes[0]].piece[3]))) {
-            if (gridInfo[indexes[0]].piece[2] === "H") setWinCondition("hollow"); else setWinCondition("solid");
+            if (gridInfo[indexes[0]].piece[3] === "H") setWinCondition("hollow"); else setWinCondition("solid");
         } else return false;
         for (const i of indexes) { gridInfo[i].win = 1; }
         return true;
@@ -464,7 +466,7 @@ const Quarto = (props) => {
                                 position={[0, -0.003, 0]}
                             />
                             {gridPositions.map((data, i) => (
-                                <Grid {...data} materials={materials} step={step} index={i} handleClick={handleGridClick} />
+                                <Grid {...data} materials={materials} step={step} index={i} handleClick={handleGridClick} piecesInfo={piecesInfo} indexSelected={indexSelected}/>
                             ))}
                             {piecesInfo.map((data, i) => (
                                 <Piece {...data} step={step} index={i} handleClick={handlePieceClick} indexSelected={indexSelected} />

@@ -493,6 +493,11 @@ export const gameMenu = {
   "quoridor" : {
     title: "Quoridor",
     items: [
+      // {
+      //   key: "1p",
+      //   text: "1 player",
+      //   ref: null,
+      // },
       {
         key: "2p",
         text: "2 player",

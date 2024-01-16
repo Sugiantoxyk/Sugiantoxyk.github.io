@@ -336,6 +336,7 @@ const Quoridor = (props) => {
 
     // Game states
     const [isHelperVisible, setHelperVisible] = useState(false);
+    // step: -1 -> AI turn
     // step: 0 -> Menu
     // step: 1 -> Pick/place piece/wall
     // step: 2 -> Current player won
@@ -344,8 +345,9 @@ const Quoridor = (props) => {
     // pieceOrWall: 1 -> Moving piece
     // pieceOrWall: 2 -> Moving wall
     const [pieceOrWall, setPieceOrWall] = useState(0);
-    const [indexSelected, setIndexSelected] = useState(-1);
+    const [playWithAI, setPlayWithAI] = useState(false);
     const [playerTurn, setPlayerTurn] = useState(1);
+    const [indexSelected, setIndexSelected] = useState(-1);
     const [piecesInfo] = useState(initialPiecesInfo);
     const [gridsInfo] = useState(initialGridsInfo);
     const [linesInfo] = useState(initialLinesInfo);
@@ -369,6 +371,9 @@ const Quoridor = (props) => {
         };
     }, []);
     function startGame(key) {
+        if (key === "1p") {
+            setPlayWithAI(true);
+        }
         setStep(1);
         setHelperVisible(true);
     }
