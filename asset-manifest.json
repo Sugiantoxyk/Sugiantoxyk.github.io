@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/static/css/main.3efa4279.css",
-    "main.js": "/static/js/main.9262ecf7.js",
+    "main.js": "/static/js/main.42ba1fb9.js",
     "static/media/quoridor.glb": "/static/media/quoridor.757480e3b40970f70230.glb",
-    "static/media/quarto.glb": "/static/media/quarto.89b256bca3820e1add72.glb",
+    "static/media/quarto.glb": "/static/media/quarto.d091dc397c331d4df88e.glb",
     "index.html": "/index.html"
   },
   "entrypoints": [
     "static/css/main.3efa4279.css",
-    "static/js/main.9262ecf7.js"
+    "static/js/main.42ba1fb9.js"
   ]
 }
