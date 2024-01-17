@@ -370,6 +370,86 @@ const Quoridor = (props) => {
             window.removeEventListener('touchmove', handleCanvasTouch);
         };
     }, []);
+    useEffect(() => {
+        if (playWithAI && playerTurn === 2) {
+            setStep(-1);
+            // Decide whether to move piece or place wall
+            var minP1Dist = BFS(gridsInfo, piecesInfo[0].grid, 0, 8, 2);
+            var minP2Dist = BFS(gridsInfo, piecesInfo[1].grid, 72, 80, 2);
+            // Choosing a wall
+            var wallIndex = -1;
+            for (let i=0; i<10; i++) {
+                if (wallsInfo[i].placed === false) {
+                    wallIndex = i;
+                    break;
+                }
+            }
+            var indexes = [];
+            var P1DistToGoal = [];
+            var P2DistToGoal = [];
+            // For each placeable location
+            for (let i=0; i<linesInfo.length; i++) {
+                // Store the index, and distances for each piece to reach the nearest goal
+                if (linesInfo[i].available === true) {
+                    const temp = handleLineHoverCheck(i, 2);
+                    if (temp[0] !== Infinity && temp[1] !== Infinity) {
+                        indexes.push(i);
+                        P1DistToGoal.push(temp[0]);
+                        P2DistToGoal.push(temp[1]);
+                    }
+                }
+            }
+            // Choose the options that will increase the distance of player to goal and remain the distance of AI to goal
+            const maxP1Dist = Math.max(...P1DistToGoal);
+            var placeableOptions = [];
+            if (maxP1Dist > minP1Dist) {
+                for (let i=0; i<P1DistToGoal.length; i++) {
+                    if (P1DistToGoal[i] === maxP1Dist && P2DistToGoal[i] === minP2Dist) {
+                        placeableOptions.push(indexes[i]);
+                    }
+                }
+            }
+
+            if (placeableOptions.length !== 0 && minP1Dist < minP2Dist && wallIndex !== -1) {
+                // AI decide to place down a wall
+                const placeOn = placeableOptions[0];
+                // const placeOn = placeableOptions[placeableOptions.length - 1];
+                // Random selection
+                // const placeOn = placeableOptions[Math.floor(Math.random() * placeableOptions.length)];
+                handleLineClick(placeOn, wallIndex);
+            } else {
+                // AI decide to move the piece
+                var nextIndexes = [];
+                var distToGoal = [];
+                // Getting all indexes that piece can move to next
+                const curPieceGrid = piecesInfo[1].grid;
+                
+                for (let i=0; i<4; i++) {
+                    const temp = checkCanMove(curPieceGrid, i);
+                    if (temp !== -1) {
+                        const availNextIndex = checkForHop(temp, i, 2);
+                        availNextIndex.forEach((index) => {
+                            nextIndexes.push(index);
+                            distToGoal.push(BFS(gridsInfo, index, 72, 80, 2));
+                        })
+                    }
+                }
+                var nextBestIndexes = [];
+                const minDist = Math.min(...distToGoal);
+                distToGoal.forEach((dist, i) => {
+                    if (dist === minDist) {
+                        nextBestIndexes.push(nextIndexes[i]);
+                    }
+                })
+                // Choosing the next grid to move to
+                // const moveTo = nextBestIndexes[nextBestIndexes.length - 1];
+                // Random selection
+                const moveTo = nextBestIndexes[Math.floor(Math.random() * nextBestIndexes.length)];
+                handleGridClick(moveTo);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [playerTurn]);
     function startGame(key) {
         if (key === "1p") {
             setPlayWithAI(true);
@@ -394,16 +474,22 @@ const Quoridor = (props) => {
         if (!gridsInfo[gridIndex].walls[dir]) return gridIndex+direction[dir];
         return -1;
     }
-    function checkForHop(gridIndex, dir) {
+    function checkForHop(gridIndex, dir, type = 1) {
+        // type: 1 -> Change gridsInfo to true
+        // type: 2 -> Returns all index of movable grid
+        // Function to find all available grid for the piece to move to
+        var nextIndexes = [];
         const oppPieceGrid = piecesInfo[playerTurn%2].grid;
         if (oppPieceGrid !== gridIndex) {
-            gridsInfo[gridIndex].available = true;
+            if (type === 1) gridsInfo[gridIndex].available = true;
+            else if (type === 2) nextIndexes.push(gridIndex);
         } else {
             // When opponent piece is on gridIndex
             const moveNext = checkCanMove(oppPieceGrid, dir)
             if (moveNext !== -1) {
                 // Current piece can hop over opponent piece
-                gridsInfo[moveNext].available = true;
+                if (type === 1) gridsInfo[moveNext].available = true;
+                else if (type === 2) nextIndexes.push(moveNext);
             } else {
                 // Current piece cannot hop over opponent piece
                 var moveNext1 = -1;
@@ -415,24 +501,27 @@ const Quoridor = (props) => {
                     moveNext1 = checkCanMove(oppPieceGrid, 0);
                     moveNext2 = checkCanMove(oppPieceGrid, 1);
                 }
-                if (moveNext1 !== -1) gridsInfo[moveNext1].available = true;
-                if (moveNext2 !== -1) gridsInfo[moveNext2].available = true;
+                if (moveNext1 !== -1) { 
+                    if (type === 1) gridsInfo[moveNext1].available = true;
+                    else if (type === 2) nextIndexes.push(moveNext1);
+                }
+                if (moveNext2 !== -1) {
+                    if (type === 1) gridsInfo[moveNext2].available = true;
+                    else if (type === 2) nextIndexes.push(moveNext2);
+                }
             }
         }
+        if (type === 2) return nextIndexes;
     }
     function handlePieceClick() {
         setPieceOrWall(1);
 
         // Updating gridsInfo.available based on currect piece locaiton
         const curPieceGrid = piecesInfo[playerTurn-1].grid;
-        const moveUp = checkCanMove(curPieceGrid, 0);
-        const moveDown = checkCanMove(curPieceGrid, 1);
-        const moveLeft = checkCanMove(curPieceGrid, 2);
-        const moveRight = checkCanMove(curPieceGrid, 3);
-        if (moveUp !== -1){ checkForHop(moveUp, 0); }
-        if (moveDown !== -1){ checkForHop(moveDown, 1); }
-        if (moveLeft !== -1){ checkForHop(moveLeft, 2); }
-        if (moveRight !== -1){ checkForHop(moveRight, 3); }
+        for (let i=0; i<4; i++) {
+            const temp = checkCanMove(curPieceGrid, i);
+            if (temp !== -1) checkForHop(temp, i);
+        }
     }
     function handleWallClick(wallIndex) {
         // Update game states
@@ -451,6 +540,7 @@ const Quoridor = (props) => {
         resetGridAvailable();
 
         // Update game states
+        setStep(1);
         setPieceOrWall(0);
         if (!checkWin()) {
             setPlayerTurn((prev) => (prev === 1? 2 : 1));
@@ -470,13 +560,13 @@ const Quoridor = (props) => {
             gridsInfo[(row+1)*9+col+1].walls[0] = true;
         }
     }
-    function handleLineClick(lineIndex) {
+    function handleLineClick(lineIndex, wallIndex = indexSelected) {
         const lineInfo = linesInfo[lineIndex];
 
         // Update walls info on placed wall
-        wallsInfo[indexSelected].placed = true;
-        wallsInfo[indexSelected].position = lineInfo.position;
-        wallsInfo[indexSelected].rotation = lineInfo.rotation;
+        wallsInfo[wallIndex].placed = true;
+        wallsInfo[wallIndex].position = lineInfo.position;
+        wallsInfo[wallIndex].rotation = lineInfo.rotation;
 
         // Update lines info to remove lines that are no longer available
         var col = -1;
@@ -511,38 +601,56 @@ const Quoridor = (props) => {
         // Update game states
         setIndexSelected(-1);
         setPieceOrWall(0);
+        setStep(1);
         setPlayerTurn((prev) => (prev === 1? 2 : 1));
     } 
-    function search(gridsInfo, direction, start, goalStart, goalEnd) {
+    function BFS(gridsInfo, start, goalStart, goalEnd, type) {
+        // type: 1 -> Return true if can reach goal from start
+        // type: 2 -> Return the minimum steps to reach nearest goal
+        // Sequence of directions [up, down, left, right]
+        const direction = [-9, 9, -1, 1];
         var curIndex = start;
         var seq = [curIndex];
         var visited = [];
+        var distance = [];
         visited.length = gridsInfo.length;
         visited.fill(0);
+        distance.length = gridsInfo.length;
+        distance.fill(Infinity);
+        distance[curIndex] = 0;
         while (seq.length !== 0) {
-            // Getting the last element in the array
-            curIndex = seq.pop();
+            // Getting the first element in the array
+            curIndex = seq.shift();
             // Terminating condition
-            if (curIndex >= goalStart && curIndex <= goalEnd) return true;
+            if (curIndex >= goalStart && curIndex <= goalEnd && type === 1) return true;
             // Set grid index as visited to prevent further visit to the index
             visited[curIndex] = 1;
             for (let i = 0; i < direction.length; i++) {
                 // For all the 4 movement (up, down, left, right), check if theres a wall and if next grid is visited
-                if (!gridsInfo[curIndex].walls[i] && visited[curIndex+direction[i]] === 0) seq.push(curIndex+direction[i]);
+                if (!gridsInfo[curIndex].walls[i] && visited[curIndex+direction[i]] === 0) {
+                    seq.push(curIndex+direction[i]);
+                    distance[curIndex+direction[i]] = Math.min(...[distance[curIndex]+1, distance[curIndex+direction[i]]]);
+                }
             }
         }
-        return false;
+        if (type === 1) 
+            return false;
+        else if (type === 2) {
+            return Math.min(...(distance.slice(goalStart, goalEnd+1)));
+        }
     }
-    function checkCanReachGoal(gridsInfo) {
-        // Sequence of directions [up, down, left, right]
-        const dir = [-9, 9, -1, 1];
+    function checkCanReachGoal(gridsInfo, type) {
+        // Running BFS search on both player's pieces if they can reach the goal
+        if (type === 1) {
+            if (BFS(gridsInfo, piecesInfo[0].grid, 0, 8, 1) && 
+                BFS(gridsInfo, piecesInfo[1].grid, 72, 80, 1)) return true;
+            else return false;
+        } else if (type === 2) {
+            return [BFS(gridsInfo, piecesInfo[0].grid, 0, 8, 2), BFS(gridsInfo, piecesInfo[1].grid, 72, 80, 2)];
+        }
 
-        // Running simple search on both player's pieces if they can reach the goal
-        if (search(gridsInfo, dir, piecesInfo[0].grid, 0, 8) && 
-            search(gridsInfo, dir, piecesInfo[1].grid, 72, 80)) return true;
-        else return false;
     }
-    function handleLineHoverCheck(lineIndex) {
+    function handleLineHoverCheck(lineIndex, type = 1) {
         // Gets a copy of gridsInfo
         const copiedGridsInfo = JSON.parse(JSON.stringify(gridsInfo));
         
@@ -564,7 +672,7 @@ const Quoridor = (props) => {
         updateGridsInfoWall(copiedGridsInfo, isVertical, col, row);
 
         // Run algorithm to check if piece can travel to a goal
-        return checkCanReachGoal(copiedGridsInfo);
+        return checkCanReachGoal(copiedGridsInfo, type);
     }
 
     return (
@@ -606,7 +714,9 @@ const Quoridor = (props) => {
                             {
                                 step !== 0 &&
                                 <Notification text={(
-                                    step === 1 ? (`Player ${playerTurn}'s turn.`) : (`Player ${playerTurn} win!`)
+                                    step === -1 ? (`AI making a choice.`) : 
+                                    step === 1 ? (`${playWithAI ? ("Your") : (`Player ${playerTurn}'s`)} turn.`) : 
+                                    (playWithAI ? (playerTurn === 1 ? ("You win!") : ("AI win!")) : (`Player ${playerTurn} win!`))
                                 )}/>
                             }
                         </div>
@@ -634,12 +744,12 @@ const Quoridor = (props) => {
                             />
                             <group position={[0, 0.045, 0]}>
                                 {piecesInfo.map((data, i) => {
-                                    return <Piece {...data} handleClick={handlePieceClick} isSelected={pieceOrWall === 1 && i+1 === playerTurn} canSelect={step !== 2 && i+1 === playerTurn} />
+                                    return <Piece {...data} handleClick={handlePieceClick} isSelected={pieceOrWall === 1 && i+1 === playerTurn} canSelect={step === 1 && i+1 === playerTurn} />
                                 })}
                             </group>
                             <group position={[0, 0.046, 0]}>
                                 {wallsInfo.map((data, i) => {
-                                    return <Wall {...data} index={i} handleClick={handleWallClick} indexSelected={indexSelected} canSelect={step !== 2 && data.player === playerTurn && !data.placed} />
+                                    return <Wall {...data} index={i} handleClick={handleWallClick} indexSelected={indexSelected} canSelect={step === 1 && data.player === playerTurn && !data.placed} />
                                 })}
                             </group>
                             <group position={[0, 0.0201, 0]}>
